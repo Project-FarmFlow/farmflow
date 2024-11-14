@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Actor, HttpAgent } from "@dfinity/agent";
 import { Principal } from "@dfinity/principal";
-import "global";
 
 // Define the IDL for your Azle canister
 const idlFactory = ({ IDL }) => {
