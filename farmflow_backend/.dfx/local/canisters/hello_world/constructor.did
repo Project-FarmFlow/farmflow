@@ -1,1 +1,52 @@
-service : () -> { getMessage : () -> (text) query; setMessage : (text) -> () }
+service : () -> {
+  createFarmer : (
+      text,
+      text,
+      text,
+      text,
+      text,
+      text,
+      text,
+      vec record {
+        id : nat;
+        moistureLevel : float64;
+        farmerId : text;
+        name : text;
+        sensors : vec record {
+          id : nat;
+          name : text;
+          greenhouseId : text;
+          typeOfSensor : text;
+          condition : text;
+        };
+        location : text;
+      },
+    ) -> ();
+  getAllFarmers : () -> (
+      vec record {
+        id : text;
+        username : text;
+        subscription : text;
+        password : text;
+        email : text;
+        phone : text;
+        location : text;
+        greenhouses : vec record {
+          id : nat;
+          moistureLevel : float64;
+          farmerId : text;
+          name : text;
+          sensors : vec record {
+            id : nat;
+            name : text;
+            greenhouseId : text;
+            typeOfSensor : text;
+            condition : text;
+          };
+          location : text;
+        };
+      },
+    ) query;
+  getMessage : () -> (text) query;
+  setMessage : (text) -> ();
+}

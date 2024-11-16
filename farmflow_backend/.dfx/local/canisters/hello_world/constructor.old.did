@@ -1,0 +1,17 @@
+service : {
+  createFarmer : (text, text, text, text, text, text, text, blob) -> ();
+  getAllFarmers : () -> (
+      vec record {
+        id : text;
+        username : text;
+        subscription : text;
+        password : text;
+        email : text;
+        phone : text;
+        location : text;
+        greenhouses : vec text;
+      },
+    ) query;
+  getMessage : () -> (text) query;
+  setMessage : (text) -> ();
+}

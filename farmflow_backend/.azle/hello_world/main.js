@@ -5084,13 +5084,106 @@ var DidVisitor = class extends idl_exports.Visitor {
   }
 };
 
+// src/Sensor.ts
+var Sensor = class {
+  constructor(id2, name, typeOfSensor, greenhouseId, condition) {
+    this.id = id2;
+    this.name = name;
+    this.typeOfSensor = typeOfSensor;
+    this.greenhouseId = greenhouseId;
+    this.condition = condition;
+  }
+};
+Sensor.idlFactory = idl_exports.Record({
+  id: idl_exports.Nat,
+  name: idl_exports.Text,
+  typeOfSensor: idl_exports.Text,
+  greenhouseId: idl_exports.Text,
+  condition: idl_exports.Text
+});
+
+// src/GreenHouse.ts
+var GreenHouse = class {
+  constructor(id2, name, location, farmerId, sensors, moistureLevel) {
+    this.id = id2;
+    this.name = name;
+    this.location = location;
+    this.farmerId = farmerId;
+    this.sensors = sensors;
+    this.moistureLevel = moistureLevel;
+  }
+};
+GreenHouse.idlFactory = idl_exports.Record({
+  id: idl_exports.Nat,
+  name: idl_exports.Text,
+  location: idl_exports.Text,
+  farmerId: idl_exports.Text,
+  sensors: idl_exports.Vec(Sensor.idlFactory),
+  moistureLevel: idl_exports.Float64
+});
+
+// src/Farmer.ts
+var Farmer = class {
+  constructor(id2, username, password, email, phone, location, subscription, greenhouses) {
+    this.id = id2;
+    this.username = username;
+    this.password = password;
+    this.email = email;
+    this.phone = phone;
+    this.location = location;
+    this.subscription = subscription;
+    this.greenhouses = greenhouses;
+  }
+};
+Farmer.idlFactory = idl_exports.Record({
+  id: idl_exports.Text,
+  username: idl_exports.Text,
+  password: idl_exports.Text,
+  email: idl_exports.Text,
+  phone: idl_exports.Text,
+  location: idl_exports.Text,
+  subscription: idl_exports.Text,
+  greenhouses: idl_exports.Vec(GreenHouse.idlFactory)
+});
+var Farmer_default = Farmer;
+
 // src/index.ts
-var _setMessage_dec, _getMessage_dec, _init;
-_getMessage_dec = [query([], idl_exports.Text)], _setMessage_dec = [update([idl_exports.Text])];
+var _setMessage_dec, _getMessage_dec, _getAllFarmers_dec, _createFarmer_dec, _init;
+_createFarmer_dec = [update([
+  idl_exports.Text,
+  idl_exports.Text,
+  idl_exports.Text,
+  idl_exports.Text,
+  idl_exports.Text,
+  idl_exports.Text,
+  idl_exports.Text,
+  idl_exports.Vec(GreenHouse.idlFactory)
+])], _getAllFarmers_dec = [query([], idl_exports.Vec(Farmer_default.idlFactory))], _getMessage_dec = [query([], idl_exports.Text)], _setMessage_dec = [update([idl_exports.Text])];
 var src_default = class {
   constructor() {
     __runInitializers(_init, 5, this);
+    // ** STORAGE & IDENTIFIERS ** //
+    this.farmers = [];
+    this.greenHouses = [];
+    this.sensors = [];
     this.message = "Hello world!";
+  }
+  createFarmer(id2, username, password, email, phone, location, subscription, greenhouses) {
+    this.farmers.push(
+      new Farmer_default(
+        id2,
+        username,
+        password,
+        email,
+        phone,
+        location,
+        subscription,
+        greenhouses
+      )
+    );
+  }
+  getAllFarmers() {
+    return this.farmers;
   }
   getMessage() {
     return this.message;
@@ -5100,6 +5193,8 @@ var src_default = class {
   }
 };
 _init = __decoratorStart(null);
+__decorateElement(_init, 1, "createFarmer", _createFarmer_dec, src_default);
+__decorateElement(_init, 1, "getAllFarmers", _getAllFarmers_dec, src_default);
 __decorateElement(_init, 1, "getMessage", _getMessage_dec, src_default);
 __decorateElement(_init, 1, "setMessage", _setMessage_dec, src_default);
 __decoratorMetadata(_init, src_default);
