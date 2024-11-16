@@ -33,6 +33,25 @@ export interface _SERVICE {
     ],
     undefined
   >,
+  'createGreenHouse' : ActorMethod<
+    [
+      bigint,
+      string,
+      string,
+      string,
+      Array<
+        {
+          'id' : bigint,
+          'name' : string,
+          'greenhouseId' : string,
+          'typeOfSensor' : string,
+          'condition' : string,
+        }
+      >,
+      number,
+    ],
+    undefined
+  >,
   'getAllFarmers' : ActorMethod<
     [],
     Array<
@@ -65,8 +84,28 @@ export interface _SERVICE {
       }
     >
   >,
-  'getMessage' : ActorMethod<[], string>,
-  'setMessage' : ActorMethod<[string], undefined>,
+  'getAllGreenHouses' : ActorMethod<
+    [],
+    Array<
+      {
+        'id' : bigint,
+        'moistureLevel' : number,
+        'farmerId' : string,
+        'name' : string,
+        'sensors' : Array<
+          {
+            'id' : bigint,
+            'name' : string,
+            'greenhouseId' : string,
+            'typeOfSensor' : string,
+            'condition' : string,
+          }
+        >,
+        'location' : string,
+      }
+    >
+  >,
+  'getGreenHouseByName' : ActorMethod<[string], boolean>,
 }
 export declare const idlFactory: IDL.InterfaceFactory;
 export declare const init: (args: { IDL: typeof IDL }) => IDL.Type[];

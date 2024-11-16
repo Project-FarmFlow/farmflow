@@ -5148,7 +5148,7 @@ Farmer.idlFactory = idl_exports.Record({
 var Farmer_default = Farmer;
 
 // src/index.ts
-var _setMessage_dec, _getMessage_dec, _getAllFarmers_dec, _createFarmer_dec, _init;
+var _getAllGreenHouses_dec, _createGreenHouse_dec, _getGreenHouseByName_dec, _getAllFarmers_dec, _createFarmer_dec, _init;
 _createFarmer_dec = [update([
   idl_exports.Text,
   idl_exports.Text,
@@ -5158,7 +5158,14 @@ _createFarmer_dec = [update([
   idl_exports.Text,
   idl_exports.Text,
   idl_exports.Vec(GreenHouse.idlFactory)
-])], _getAllFarmers_dec = [query([], idl_exports.Vec(Farmer_default.idlFactory))], _getMessage_dec = [query([], idl_exports.Text)], _setMessage_dec = [update([idl_exports.Text])];
+])], _getAllFarmers_dec = [query([], idl_exports.Vec(Farmer_default.idlFactory))], _getGreenHouseByName_dec = [query([idl_exports.Text], idl_exports.Bool)], _createGreenHouse_dec = [update([
+  idl_exports.Nat,
+  idl_exports.Text,
+  idl_exports.Text,
+  idl_exports.Text,
+  idl_exports.Vec(Sensor.idlFactory),
+  idl_exports.Float64
+])], _getAllGreenHouses_dec = [query([], idl_exports.Vec(GreenHouse.idlFactory))];
 var src_default = class {
   constructor() {
     __runInitializers(_init, 5, this);
@@ -5166,7 +5173,6 @@ var src_default = class {
     this.farmers = [];
     this.greenHouses = [];
     this.sensors = [];
-    this.message = "Hello world!";
   }
   createFarmer(id2, username, password, email, phone, location, subscription, greenhouses) {
     this.farmers.push(
@@ -5185,18 +5191,33 @@ var src_default = class {
   getAllFarmers() {
     return this.farmers;
   }
-  getMessage() {
-    return this.message;
+  getGreenHouseByName(name) {
+    if (this.greenHouses.find((greenHouse) => greenHouse.name === name)) {
+      return true;
+    } else {
+      return false;
+    }
   }
-  setMessage(message) {
-    this.message = message;
+  createGreenHouse(id2, name, location, farmerId, sensors, moistureLevel) {
+    const isAvailable = this.getGreenHouseByName(name);
+    if (isAvailable) {
+      throw new Error("Greenhouse already exists");
+    } else {
+      this.greenHouses.push(
+        new GreenHouse(id2, name, location, farmerId, sensors, moistureLevel)
+      );
+    }
+  }
+  getAllGreenHouses() {
+    return this.greenHouses;
   }
 };
 _init = __decoratorStart(null);
 __decorateElement(_init, 1, "createFarmer", _createFarmer_dec, src_default);
 __decorateElement(_init, 1, "getAllFarmers", _getAllFarmers_dec, src_default);
-__decorateElement(_init, 1, "getMessage", _getMessage_dec, src_default);
-__decorateElement(_init, 1, "setMessage", _setMessage_dec, src_default);
+__decorateElement(_init, 1, "getGreenHouseByName", _getGreenHouseByName_dec, src_default);
+__decorateElement(_init, 1, "createGreenHouse", _createGreenHouse_dec, src_default);
+__decorateElement(_init, 1, "getAllGreenHouses", _getAllGreenHouses_dec, src_default);
 __decoratorMetadata(_init, src_default);
 
 // <stdin>

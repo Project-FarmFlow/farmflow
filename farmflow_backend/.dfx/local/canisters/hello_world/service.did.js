@@ -31,6 +31,26 @@ export const idlFactory = ({ IDL }) => {
         [],
         [],
       ),
+    'createGreenHouse' : IDL.Func(
+        [
+          IDL.Nat,
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Vec(
+            IDL.Record({
+              'id' : IDL.Nat,
+              'name' : IDL.Text,
+              'greenhouseId' : IDL.Text,
+              'typeOfSensor' : IDL.Text,
+              'condition' : IDL.Text,
+            })
+          ),
+          IDL.Float64,
+        ],
+        [],
+        [],
+      ),
     'getAllFarmers' : IDL.Func(
         [],
         [
@@ -66,8 +86,31 @@ export const idlFactory = ({ IDL }) => {
         ],
         ['query'],
       ),
-    'getMessage' : IDL.Func([], [IDL.Text], ['query']),
-    'setMessage' : IDL.Func([IDL.Text], [], []),
+    'getAllGreenHouses' : IDL.Func(
+        [],
+        [
+          IDL.Vec(
+            IDL.Record({
+              'id' : IDL.Nat,
+              'moistureLevel' : IDL.Float64,
+              'farmerId' : IDL.Text,
+              'name' : IDL.Text,
+              'sensors' : IDL.Vec(
+                IDL.Record({
+                  'id' : IDL.Nat,
+                  'name' : IDL.Text,
+                  'greenhouseId' : IDL.Text,
+                  'typeOfSensor' : IDL.Text,
+                  'condition' : IDL.Text,
+                })
+              ),
+              'location' : IDL.Text,
+            })
+          ),
+        ],
+        ['query'],
+      ),
+    'getGreenHouseByName' : IDL.Func([IDL.Text], [IDL.Bool], ['query']),
   });
 };
 export const init = ({ IDL }) => { return []; };

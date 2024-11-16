@@ -22,6 +22,20 @@ service : () -> {
         location : text;
       },
     ) -> ();
+  createGreenHouse : (
+      nat,
+      text,
+      text,
+      text,
+      vec record {
+        id : nat;
+        name : text;
+        greenhouseId : text;
+        typeOfSensor : text;
+        condition : text;
+      },
+      float64,
+    ) -> ();
   getAllFarmers : () -> (
       vec record {
         id : text;
@@ -47,6 +61,21 @@ service : () -> {
         };
       },
     ) query;
-  getMessage : () -> (text) query;
-  setMessage : (text) -> ();
+  getAllGreenHouses : () -> (
+      vec record {
+        id : nat;
+        moistureLevel : float64;
+        farmerId : text;
+        name : text;
+        sensors : vec record {
+          id : nat;
+          name : text;
+          greenhouseId : text;
+          typeOfSensor : text;
+          condition : text;
+        };
+        location : text;
+      },
+    ) query;
+  getGreenHouseByName : (text) -> (bool) query;
 }

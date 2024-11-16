@@ -9,7 +9,8 @@ export default class {
   greenHouses: GreenHouse[] = [];
   sensors: Sensor[] = [];
 
-  // ** CREATE FARMER ** //
+  // ** FARMER FUNCTIONS ** //
+  // ** create farmers ** //
   @update([
     IDL.Text,
     IDL.Text,
@@ -43,10 +44,51 @@ export default class {
       )
     );
   }
-
-  // ** GET ALL FARMERS ** //
+  // ** get all farmers ** //
   @query([], IDL.Vec(Farmer.idlFactory))
   getAllFarmers(): Farmer[] {
     return this.farmers;
+  }
+
+  // ** GREENHOUSE FUNCTIONS ** //
+  // ** get greenhouse by name ** //
+  @query([IDL.Text], IDL.Bool)
+  getGreenHouseByName(name: string): boolean {
+    if (this.greenHouses.find((greenHouse) => greenHouse.name === name)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  // ** create greenhouse ** //
+  @update([
+    IDL.Nat,
+    IDL.Text,
+    IDL.Text,
+    IDL.Text,
+    IDL.Vec(Sensor.idlFactory),
+    IDL.Float64,
+  ])
+  createGreenHouse(
+    id: number,
+    name: string,
+    location: string,
+    farmerId: string,
+    sensors: Sensor[],
+    moistureLevel: number
+  ): void {
+    const isAvailable = this.getGreenHouseByName(name);
+    if (isAvailable) {
+      throw new Error("Greenhouse already exists");
+    } else {
+      this.greenHouses.push(
+        new GreenHouse(id, name, location, farmerId, sensors, moistureLevel)
+      );
+    }
+  }
+  // ** get all greenhouse ** //
+  @query([], IDL.Vec(GreenHouse.idlFactory))
+  getAllGreenHouses(): GreenHouse[] {
+    return this.greenHouses;
   }
 }
