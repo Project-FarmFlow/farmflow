@@ -376,3 +376,7 @@ export default class {
     return sensorToUpdate;
   }
 }
+
+//TO-DO
+// => update mappings for farmers to show the greenhouses they own
+// => update mappings for greenhouses to show the sensors they have
