@@ -9,7 +9,20 @@ export default class {
   greenHouses: GreenHouse[] = [];
   sensors: Sensor[] = [];
 
+  // ** MAPPINGS ** //
+  farmerIdToGreenHouse: Record<string, GreenHouse> = {};
+  farmerIdToFarmer: Record<string, Farmer> = {};
+
   // ** FARMER FUNCTIONS ** //
+  // ** get farmer by name ** //
+  @query([IDL.Text], IDL.Bool)
+  getFarmerByName(name: string): boolean {
+    if (this.farmers.find((farmer) => farmer.username === name)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
   // ** create farmers ** //
   @update([
     IDL.Text,
@@ -31,8 +44,11 @@ export default class {
     subscription: string,
     greenhouses: GreenHouse[]
   ): void {
-    this.farmers.push(
-      new Farmer(
+    const isAvailable = this.getFarmerByName(username);
+    if (isAvailable) {
+      throw new Error("Farmer already exists");
+    } else {
+      this.farmerIdToFarmer[id] = new Farmer(
         id,
         username,
         password,
@@ -41,8 +57,20 @@ export default class {
         location,
         subscription,
         greenhouses
-      )
-    );
+      );
+      this.farmers.push(
+        new Farmer(
+          id,
+          username,
+          password,
+          email,
+          phone,
+          location,
+          subscription,
+          greenhouses
+        )
+      );
+    }
   }
   // ** get all farmers ** //
   @query([], IDL.Vec(Farmer.idlFactory))
@@ -81,6 +109,14 @@ export default class {
     if (isAvailable) {
       throw new Error("Greenhouse already exists");
     } else {
+      this.farmerIdToGreenHouse[farmerId] = new GreenHouse(
+        id,
+        name,
+        location,
+        farmerId,
+        sensors,
+        moistureLevel
+      );
       this.greenHouses.push(
         new GreenHouse(id, name, location, farmerId, sensors, moistureLevel)
       );
@@ -90,5 +126,20 @@ export default class {
   @query([], IDL.Vec(GreenHouse.idlFactory))
   getAllGreenHouses(): GreenHouse[] {
     return this.greenHouses;
+  }
+
+  // ** SENSOR FUNCTIONS ** //
+  // ** create sensor ** //
+  @update([IDL.Nat, IDL.Text, IDL.Text, IDL.Text, IDL.Text])
+  createSensor(
+    id: number,
+    name: string,
+    typeOfSensor: string,
+    greenhouseId: string,
+    condition: string
+  ): void {
+    this.sensors.push(
+      new Sensor(id, name, typeOfSensor, greenhouseId, condition)
+    );
   }
 }
