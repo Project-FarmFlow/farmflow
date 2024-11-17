@@ -36,6 +36,7 @@ service : {
       },
       float64,
     ) -> ();
+  createSensor : (text, nat, text, text, text, text) -> ();
   getAllFarmers : () -> (
       vec record {
         id : text;
@@ -77,5 +78,97 @@ service : {
         location : text;
       },
     ) query;
+  getFarmerById : (text) -> (
+      record {
+        id : text;
+        username : text;
+        subscription : text;
+        password : text;
+        email : text;
+        phone : text;
+        location : text;
+        greenhouses : vec record {
+          id : nat;
+          moistureLevel : float64;
+          farmerId : text;
+          name : text;
+          sensors : vec record {
+            id : nat;
+            name : text;
+            greenhouseId : text;
+            typeOfSensor : text;
+            condition : text;
+          };
+          location : text;
+        };
+      },
+    ) query;
+  getFarmerByName : (text) -> (bool) query;
+  getGreenHouseById : (nat) -> (
+      record {
+        id : nat;
+        moistureLevel : float64;
+        farmerId : text;
+        name : text;
+        sensors : vec record {
+          id : nat;
+          name : text;
+          greenhouseId : text;
+          typeOfSensor : text;
+          condition : text;
+        };
+        location : text;
+      },
+    ) query;
   getGreenHouseByName : (text) -> (bool) query;
+  updateFarmerDetails : (text, text, text) -> (
+      record {
+        id : text;
+        username : text;
+        subscription : text;
+        password : text;
+        email : text;
+        phone : text;
+        location : text;
+        greenhouses : vec record {
+          id : nat;
+          moistureLevel : float64;
+          farmerId : text;
+          name : text;
+          sensors : vec record {
+            id : nat;
+            name : text;
+            greenhouseId : text;
+            typeOfSensor : text;
+            condition : text;
+          };
+          location : text;
+        };
+      },
+    );
+  updateGreenHouseDetails : (nat, text, text) -> (
+      record {
+        id : nat;
+        moistureLevel : float64;
+        farmerId : text;
+        name : text;
+        sensors : vec record {
+          id : nat;
+          name : text;
+          greenhouseId : text;
+          typeOfSensor : text;
+          condition : text;
+        };
+        location : text;
+      },
+    );
+  updateSensorCondition : (text, nat, text) -> (
+      record {
+        id : nat;
+        name : text;
+        greenhouseId : text;
+        typeOfSensor : text;
+        condition : text;
+      },
+    );
 }

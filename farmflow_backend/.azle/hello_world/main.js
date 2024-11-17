@@ -5148,7 +5148,7 @@ Farmer.idlFactory = idl_exports.Record({
 var Farmer_default = Farmer;
 
 // src/index.ts
-var _createSensor_dec, _getAllGreenHouses_dec, _createGreenHouse_dec, _getGreenHouseByName_dec, _getAllFarmers_dec, _createFarmer_dec, _getFarmerByName_dec, _init;
+var _updateSensorCondition_dec, _createSensor_dec, _addSensor_dec, _updateGreenHouseDetails_dec, _getGreenHouseById_dec, _getAllGreenHouses_dec, _createGreenHouse_dec, _getGreenHouseByName_dec, _updateFarmerDetails_dec, _getFarmerById_dec, _getAllFarmers_dec, _createFarmer_dec, _getFarmerByName_dec, _init;
 _getFarmerByName_dec = [query([idl_exports.Text], idl_exports.Bool)], _createFarmer_dec = [update([
   idl_exports.Text,
   idl_exports.Text,
@@ -5158,14 +5158,14 @@ _getFarmerByName_dec = [query([idl_exports.Text], idl_exports.Bool)], _createFar
   idl_exports.Text,
   idl_exports.Text,
   idl_exports.Vec(GreenHouse.idlFactory)
-])], _getAllFarmers_dec = [query([], idl_exports.Vec(Farmer_default.idlFactory))], _getGreenHouseByName_dec = [query([idl_exports.Text], idl_exports.Bool)], _createGreenHouse_dec = [update([
+])], _getAllFarmers_dec = [query([], idl_exports.Vec(Farmer_default.idlFactory))], _getFarmerById_dec = [query([idl_exports.Text], Farmer_default.idlFactory)], _updateFarmerDetails_dec = [update([idl_exports.Text, idl_exports.Text, idl_exports.Text], Farmer_default.idlFactory)], _getGreenHouseByName_dec = [query([idl_exports.Text], idl_exports.Bool)], _createGreenHouse_dec = [update([
   idl_exports.Nat,
   idl_exports.Text,
   idl_exports.Text,
   idl_exports.Text,
   idl_exports.Vec(Sensor.idlFactory),
   idl_exports.Float64
-])], _getAllGreenHouses_dec = [query([], idl_exports.Vec(GreenHouse.idlFactory))], _createSensor_dec = [update([idl_exports.Nat, idl_exports.Text, idl_exports.Text, idl_exports.Text, idl_exports.Text])];
+])], _getAllGreenHouses_dec = [query([], idl_exports.Vec(GreenHouse.idlFactory))], _getGreenHouseById_dec = [query([idl_exports.Nat], GreenHouse.idlFactory)], _updateGreenHouseDetails_dec = [update([idl_exports.Nat, idl_exports.Text, idl_exports.Text], GreenHouse.idlFactory)], _addSensor_dec = [update([idl_exports.Nat, idl_exports.Nat, idl_exports.Text, idl_exports.Text, idl_exports.Text], Sensor.idlFactory)], _createSensor_dec = [update([idl_exports.Text, idl_exports.Nat, idl_exports.Text, idl_exports.Text, idl_exports.Text, idl_exports.Text])], _updateSensorCondition_dec = [update([idl_exports.Text, idl_exports.Nat, idl_exports.Text], Sensor.idlFactory)];
 var src_default = class {
   constructor() {
     __runInitializers(_init, 5, this);
@@ -5176,6 +5176,8 @@ var src_default = class {
     // ** MAPPINGS ** //
     this.farmerIdToGreenHouse = {};
     this.farmerIdToFarmer = {};
+    this.farmerIdToSensors = {};
+    this.greenHouseIdToSensors = {};
   }
   getFarmerByName(name) {
     if (this.farmers.find((farmer) => farmer.username === name)) {
@@ -5216,6 +5218,64 @@ var src_default = class {
   getAllFarmers() {
     return this.farmers;
   }
+  getFarmerById(id2) {
+    if (this.farmerIdToFarmer[id2]) {
+      return this.farmerIdToFarmer[id2];
+    } else {
+      throw new Error("Farmer not found");
+    }
+  }
+  updateFarmerDetails(id2, newValue, fieldToUpdate) {
+    if (fieldToUpdate !== "username" && fieldToUpdate !== "password" && fieldToUpdate !== "email" && fieldToUpdate !== "phone" && fieldToUpdate !== "location" && fieldToUpdate !== "subscription") {
+      throw new Error("Invalid field to update");
+    }
+    let farmerToUpdate;
+    switch (fieldToUpdate) {
+      case "username":
+        this.farmerIdToFarmer[id2].username = newValue;
+        farmerToUpdate = this.getFarmerById(id2);
+        farmerToUpdate.username = newValue;
+        this.farmers = this.farmers.filter((farmer) => farmer.id !== id2);
+        this.farmers.push(farmerToUpdate);
+        break;
+      case "password":
+        this.farmerIdToFarmer[id2].password = newValue;
+        farmerToUpdate = this.getFarmerById(id2);
+        farmerToUpdate.password = newValue;
+        this.farmers = this.farmers.filter((farmer) => farmer.id !== id2);
+        this.farmers.push(farmerToUpdate);
+        break;
+      case "email":
+        this.farmerIdToFarmer[id2].email = newValue;
+        farmerToUpdate = this.getFarmerById(id2);
+        farmerToUpdate.email = newValue;
+        this.farmers = this.farmers.filter((farmer) => farmer.id !== id2);
+        this.farmers.push(farmerToUpdate);
+        break;
+      case "phone":
+        this.farmerIdToFarmer[id2].phone = newValue;
+        farmerToUpdate = this.getFarmerById(id2);
+        farmerToUpdate.phone = newValue;
+        this.farmers = this.farmers.filter((farmer) => farmer.id !== id2);
+        this.farmers.push(farmerToUpdate);
+        break;
+      case "location":
+        this.farmerIdToFarmer[id2].location = newValue;
+        farmerToUpdate = this.getFarmerById(id2);
+        farmerToUpdate.location = newValue;
+        this.farmers = this.farmers.filter((farmer) => farmer.id !== id2);
+        this.farmers.push(farmerToUpdate);
+        break;
+      case "subscription":
+        this.farmerIdToFarmer[id2].subscription = newValue;
+        farmerToUpdate = this.getFarmerById(id2);
+        farmerToUpdate.subscription = newValue;
+        this.farmers = this.farmers.filter((farmer) => farmer.id !== id2);
+        this.farmers.push(farmerToUpdate);
+        break;
+    }
+    return farmerToUpdate;
+  }
   getGreenHouseByName(name) {
     if (this.greenHouses.find((greenHouse) => greenHouse.name === name)) {
       return true;
@@ -5244,20 +5304,122 @@ var src_default = class {
   getAllGreenHouses() {
     return this.greenHouses;
   }
-  createSensor(id2, name, typeOfSensor, greenhouseId, condition) {
-    this.sensors.push(
-      new Sensor(id2, name, typeOfSensor, greenhouseId, condition)
+  getGreenHouseById(id2) {
+    if (this.farmerIdToGreenHouse[id2]) {
+      return this.farmerIdToGreenHouse[id2];
+    } else {
+      throw new Error("Greenhouse not found");
+    }
+  }
+  updateGreenHouseDetails(farmerId, greenHouseId, newValue, fieldToUpdate) {
+    if (fieldToUpdate !== "name" && fieldToUpdate !== "location" && fieldToUpdate !== "moistureLevel") {
+      throw new Error("Invalid field to update");
+    }
+    let greenhouseToUpdate;
+    switch (fieldToUpdate) {
+      case "name":
+        this.farmerIdToGreenHouse[farmerId].name = newValue;
+        greenhouseToUpdate = this.getGreenHouseById(greenHouseId);
+        greenhouseToUpdate.name = newValue;
+        this.greenHouses = this.greenHouses.filter(
+          (greenhouse) => greenhouse.id !== greenHouseId
+        );
+        this.greenHouses.push(greenhouseToUpdate);
+        break;
+      case "location":
+        this.farmerIdToGreenHouse[farmerId].location = newValue;
+        greenhouseToUpdate = this.getGreenHouseById(greenHouseId);
+        greenhouseToUpdate.location = newValue;
+        this.greenHouses = this.greenHouses.filter(
+          (greenhouse) => greenhouse.id !== greenHouseId
+        );
+        this.greenHouses.push(greenhouseToUpdate);
+        break;
+      case "moistureLevel":
+        this.farmerIdToGreenHouse[farmerId].moistureLevel = parseFloat(newValue);
+        greenhouseToUpdate = this.getGreenHouseById(greenHouseId);
+        greenhouseToUpdate.moistureLevel = parseFloat(newValue);
+        this.greenHouses = this.greenHouses.filter(
+          (greenhouse) => greenhouse.id !== greenHouseId
+        );
+        this.greenHouses.push(greenhouseToUpdate);
+        break;
+    }
+    return greenhouseToUpdate;
+  }
+  addSensor(greenHouseId, sensorId, sensorName, typeOfSensor, conditionOfSensor) {
+    if (!this.getGreenHouseById(greenHouseId)) {
+      throw new Error("Greenhouse not found");
+    }
+    if (this.greenHouseIdToSensors[greenHouseId].find(
+      (sensor) => sensor.name === sensorName
+    )) {
+      throw new Error("Sensor already exists");
+    }
+    let createdSensor;
+    createdSensor = new Sensor(
+      sensorId,
+      sensorName,
+      typeOfSensor,
+      greenHouseId.toString(),
+      conditionOfSensor
     );
+    this.greenHouseIdToSensors[greenHouseId].push(createdSensor);
+    this.sensors.push(createdSensor);
+    return createdSensor;
+  }
+  createSensor(farmerID, id2, name, typeOfSensor, greenhouseId, condition) {
+    if (this.getFarmerById(farmerID)) {
+      if (this.farmerIdToSensors[farmerID]) {
+        if (this.farmerIdToSensors[farmerID].find(
+          (sensor) => sensor.name === name
+        )) {
+          throw new Error("Sensor already exists");
+        } else {
+          this.farmerIdToSensors[farmerID].push(
+            new Sensor(id2, name, typeOfSensor, greenhouseId, condition)
+          );
+          this.sensors.push(
+            new Sensor(id2, name, typeOfSensor, greenhouseId, condition)
+          );
+        }
+      }
+    }
+  }
+  updateSensorCondition(farmerId, sensorId, condition) {
+    if (condition !== "good" && condition !== "bad") {
+      throw new Error("Invalid condition");
+    }
+    let sensorToUpdate;
+    this.farmerIdToSensors[farmerId].find((sensor) => {
+      if (sensor.id === sensorId) {
+        sensor.condition = condition;
+        sensorToUpdate = sensor;
+      }
+    });
+    if (sensorToUpdate) {
+      this.sensors = this.sensors.filter((sensor) => sensor.id !== sensorId);
+      this.sensors.push(sensorToUpdate);
+    } else {
+      throw new Error("Sensor not found");
+    }
+    return sensorToUpdate;
   }
 };
 _init = __decoratorStart(null);
 __decorateElement(_init, 1, "getFarmerByName", _getFarmerByName_dec, src_default);
 __decorateElement(_init, 1, "createFarmer", _createFarmer_dec, src_default);
 __decorateElement(_init, 1, "getAllFarmers", _getAllFarmers_dec, src_default);
+__decorateElement(_init, 1, "getFarmerById", _getFarmerById_dec, src_default);
+__decorateElement(_init, 1, "updateFarmerDetails", _updateFarmerDetails_dec, src_default);
 __decorateElement(_init, 1, "getGreenHouseByName", _getGreenHouseByName_dec, src_default);
 __decorateElement(_init, 1, "createGreenHouse", _createGreenHouse_dec, src_default);
 __decorateElement(_init, 1, "getAllGreenHouses", _getAllGreenHouses_dec, src_default);
+__decorateElement(_init, 1, "getGreenHouseById", _getGreenHouseById_dec, src_default);
+__decorateElement(_init, 1, "updateGreenHouseDetails", _updateGreenHouseDetails_dec, src_default);
+__decorateElement(_init, 1, "addSensor", _addSensor_dec, src_default);
 __decorateElement(_init, 1, "createSensor", _createSensor_dec, src_default);
+__decorateElement(_init, 1, "updateSensorCondition", _updateSensorCondition_dec, src_default);
 __decoratorMetadata(_init, src_default);
 
 // <stdin>

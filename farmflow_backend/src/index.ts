@@ -13,6 +13,7 @@ export default class {
   farmerIdToGreenHouse: Record<string, GreenHouse> = {};
   farmerIdToFarmer: Record<string, Farmer> = {};
   farmerIdToSensors: Record<string, Sensor[]> = {};
+  greenHouseIdToSensors: Record<number, Sensor[]> = {};
 
   // ** FARMER FUNCTIONS ** //
   // ** get farmer by name ** //
@@ -283,6 +284,37 @@ export default class {
         break;
     }
     return greenhouseToUpdate;
+  }
+  // ** add sensor to greenhouse ** //
+  @update([IDL.Nat, IDL.Nat, IDL.Text, IDL.Text, IDL.Text], Sensor.idlFactory)
+  addSensor(
+    greenHouseId: number,
+    sensorId: number,
+    sensorName: string,
+    typeOfSensor: string,
+    conditionOfSensor: string
+  ): Sensor {
+    if (!this.getGreenHouseById(greenHouseId)) {
+      throw new Error("Greenhouse not found");
+    }
+    if (
+      this.greenHouseIdToSensors[greenHouseId].find(
+        (sensor) => sensor.name === sensorName
+      )
+    ) {
+      throw new Error("Sensor already exists");
+    }
+    let createdSensor;
+    createdSensor = new Sensor(
+      sensorId,
+      sensorName,
+      typeOfSensor,
+      greenHouseId.toString(),
+      conditionOfSensor
+    );
+    this.greenHouseIdToSensors[greenHouseId].push(createdSensor);
+    this.sensors.push(createdSensor);
+    return createdSensor;
   }
 
   // ** SENSOR FUNCTIONS ** //
