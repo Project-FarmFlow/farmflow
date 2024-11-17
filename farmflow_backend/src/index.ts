@@ -12,6 +12,7 @@ export default class {
   // ** MAPPINGS ** //
   farmerIdToGreenHouse: Record<string, GreenHouse> = {};
   farmerIdToFarmer: Record<string, Farmer> = {};
+  farmerIdToSensors: Record<string, Sensor[]> = {};
 
   // ** FARMER FUNCTIONS ** //
   // ** get farmer by name ** //
@@ -23,7 +24,7 @@ export default class {
       return false;
     }
   }
-  // ** create farmers ** //
+  // ** create farmer ** //
   @update([
     IDL.Text,
     IDL.Text,
@@ -77,6 +78,97 @@ export default class {
   getAllFarmers(): Farmer[] {
     return this.farmers;
   }
+  // ** get farmer by ID ** //
+  @query([IDL.Text], Farmer.idlFactory)
+  getFarmerById(id: string): Farmer {
+    if (this.farmerIdToFarmer[id]) {
+      return this.farmerIdToFarmer[id];
+    } else {
+      throw new Error("Farmer not found");
+    }
+  }
+  // ** update farmer ** //
+  @update([IDL.Text, IDL.Text, IDL.Text], Farmer.idlFactory)
+  updateFarmerDetails(
+    id: string,
+    newValue: string,
+    fieldToUpdate: string
+  ): Farmer {
+    if (
+      fieldToUpdate !== "username" &&
+      fieldToUpdate !== "password" &&
+      fieldToUpdate !== "email" &&
+      fieldToUpdate !== "phone" &&
+      fieldToUpdate !== "location" &&
+      fieldToUpdate !== "subscription"
+    ) {
+      throw new Error("Invalid field to update");
+    }
+    let farmerToUpdate;
+    switch (fieldToUpdate) {
+      case "username":
+        //update mapping
+        this.farmerIdToFarmer[id].username = newValue;
+        //update farmers array
+        farmerToUpdate = this.getFarmerById(id);
+        farmerToUpdate.username = newValue;
+        //remove old farmer and push new
+        this.farmers = this.farmers.filter((farmer) => farmer.id !== id);
+        this.farmers.push(farmerToUpdate);
+        break;
+      case "password":
+        //update mapping
+        this.farmerIdToFarmer[id].password = newValue;
+        //update farmers array
+        farmerToUpdate = this.getFarmerById(id);
+        farmerToUpdate.password = newValue;
+        //remove old farmer and push new
+        this.farmers = this.farmers.filter((farmer) => farmer.id !== id);
+        this.farmers.push(farmerToUpdate);
+        break;
+      case "email":
+        //update mapping
+        this.farmerIdToFarmer[id].email = newValue;
+        //update farmers array
+        farmerToUpdate = this.getFarmerById(id);
+        farmerToUpdate.email = newValue;
+        //remove old farmer and push new
+        this.farmers = this.farmers.filter((farmer) => farmer.id !== id);
+        this.farmers.push(farmerToUpdate);
+        break;
+      case "phone":
+        //update mapping
+        this.farmerIdToFarmer[id].phone = newValue;
+        //update farmers array
+        farmerToUpdate = this.getFarmerById(id);
+        farmerToUpdate.phone = newValue;
+        //remove old farmer and push new
+        this.farmers = this.farmers.filter((farmer) => farmer.id !== id);
+        this.farmers.push(farmerToUpdate);
+        break;
+      case "location":
+        //update mapping
+        this.farmerIdToFarmer[id].location = newValue;
+        //update farmers array
+        farmerToUpdate = this.getFarmerById(id);
+        farmerToUpdate.location = newValue;
+        //remove old farmer and push new
+        this.farmers = this.farmers.filter((farmer) => farmer.id !== id);
+        this.farmers.push(farmerToUpdate);
+        break;
+      case "subscription":
+        //update mapping
+        this.farmerIdToFarmer[id].subscription = newValue;
+        //update farmers array
+        farmerToUpdate = this.getFarmerById(id);
+        farmerToUpdate.subscription = newValue;
+        //remove old farmer and push new
+        this.farmers = this.farmers.filter((farmer) => farmer.id !== id);
+        this.farmers.push(farmerToUpdate);
+        break;
+    }
+    return farmerToUpdate;
+  }
 
   // ** GREENHOUSE FUNCTIONS ** //
   // ** get greenhouse by name ** //
@@ -127,19 +219,128 @@ export default class {
   getAllGreenHouses(): GreenHouse[] {
     return this.greenHouses;
   }
+  @query([IDL.Nat], GreenHouse.idlFactory)
+  getGreenHouseById(id: number): GreenHouse {
+    if (this.farmerIdToGreenHouse[id]) {
+      return this.farmerIdToGreenHouse[id];
+    } else {
+      throw new Error("Greenhouse not found");
+    }
+  }
+  // ** update greenhouse ** //
+  @update([IDL.Nat, IDL.Text, IDL.Text], GreenHouse.idlFactory)
+  updateGreenHouseDetails(
+    farmerId: string,
+    greenHouseId: number,
+    newValue: string,
+    fieldToUpdate: string
+  ): GreenHouse {
+    if (
+      fieldToUpdate !== "name" &&
+      fieldToUpdate !== "location" &&
+      fieldToUpdate !== "moistureLevel"
+    ) {
+      throw new Error("Invalid field to update");
+    }
+    let greenhouseToUpdate;
+    switch (fieldToUpdate) {
+      case "name":
+        //update mapping
+        this.farmerIdToGreenHouse[farmerId].name = newValue;
+        //update greenhouses array
+        greenhouseToUpdate = this.getGreenHouseById(greenHouseId);
+        greenhouseToUpdate.name = newValue;
+        //remove old greenhouse and push new
+        this.greenHouses = this.greenHouses.filter(
+          (greenhouse) => greenhouse.id !== greenHouseId
+        );
+        this.greenHouses.push(greenhouseToUpdate);
+        break;
+      case "location":
+        //update mapping
+        this.farmerIdToGreenHouse[farmerId].location = newValue;
+        //update greenhouses array
+        greenhouseToUpdate = this.getGreenHouseById(greenHouseId);
+        greenhouseToUpdate.location = newValue;
+        //remove old greenhouse and push new
+        this.greenHouses = this.greenHouses.filter(
+          (greenhouse) => greenhouse.id !== greenHouseId
+        );
+        this.greenHouses.push(greenhouseToUpdate);
+        break;
+      case "moistureLevel":
+        //update mapping
+        this.farmerIdToGreenHouse[farmerId].moistureLevel =
+          parseFloat(newValue);
+        //update greenhouses array
+        greenhouseToUpdate = this.getGreenHouseById(greenHouseId);
+        greenhouseToUpdate.moistureLevel = parseFloat(newValue);
+        //remove old greenhouse and push new
+        this.greenHouses = this.greenHouses.filter(
+          (greenhouse) => greenhouse.id !== greenHouseId
+        );
+        this.greenHouses.push(greenhouseToUpdate);
+        break;
+    }
+    return greenhouseToUpdate;
+  }
 
   // ** SENSOR FUNCTIONS ** //
   // ** create sensor ** //
-  @update([IDL.Nat, IDL.Text, IDL.Text, IDL.Text, IDL.Text])
+  @update([IDL.Text, IDL.Nat, IDL.Text, IDL.Text, IDL.Text, IDL.Text])
   createSensor(
+    farmerID: string,
     id: number,
     name: string,
     typeOfSensor: string,
     greenhouseId: string,
     condition: string
   ): void {
-    this.sensors.push(
-      new Sensor(id, name, typeOfSensor, greenhouseId, condition)
-    );
+    if (this.getFarmerById(farmerID)) {
+      //check if the farmer has created this sensor before form the farmerIdToSensors mapping
+      if (this.farmerIdToSensors[farmerID]) {
+        if (
+          this.farmerIdToSensors[farmerID].find(
+            (sensor) => sensor.name === name
+          )
+        ) {
+          throw new Error("Sensor already exists");
+        } else {
+          this.farmerIdToSensors[farmerID].push(
+            new Sensor(id, name, typeOfSensor, greenhouseId, condition)
+          );
+          this.sensors.push(
+            new Sensor(id, name, typeOfSensor, greenhouseId, condition)
+          );
+        }
+      }
+    }
+  }
+  // ** update sensor condition ** //
+  @update([IDL.Text, IDL.Nat, IDL.Text], Sensor.idlFactory)
+  updateSensorCondition(
+    farmerId: string,
+    sensorId: number,
+    condition: string
+  ): Sensor {
+    if (condition !== "good" && condition !== "bad") {
+      throw new Error("Invalid condition");
+    }
+    let sensorToUpdate;
+    //update mapping
+    this.farmerIdToSensors[farmerId].find((sensor) => {
+      if (sensor.id === sensorId) {
+        sensor.condition = condition;
+        sensorToUpdate = sensor;
+      }
+    });
+    //update sensors array
+    if (sensorToUpdate) {
+      this.sensors = this.sensors.filter((sensor) => sensor.id !== sensorId);
+      this.sensors.push(sensorToUpdate);
+    } else {
+      throw new Error("Sensor not found");
+    }
+    return sensorToUpdate;
   }
 }

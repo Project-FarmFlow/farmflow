@@ -51,6 +51,11 @@ export const idlFactory = ({ IDL }) => {
         [],
         [],
       ),
+    'createSensor' : IDL.Func(
+        [IDL.Nat, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+        [],
+        [],
+      ),
     'getAllFarmers' : IDL.Func(
         [],
         [
@@ -110,6 +115,7 @@ export const idlFactory = ({ IDL }) => {
         ],
         ['query'],
       ),
+    'getFarmerByName' : IDL.Func([IDL.Text], [IDL.Bool], ['query']),
     'getGreenHouseByName' : IDL.Func([IDL.Text], [IDL.Bool], ['query']),
   });
 };

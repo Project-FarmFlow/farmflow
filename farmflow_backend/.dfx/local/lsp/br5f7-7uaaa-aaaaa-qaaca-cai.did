@@ -36,6 +36,7 @@ service : {
       },
       float64,
     ) -> ();
+  createSensor : (nat, text, text, text, text) -> ();
   getAllFarmers : () -> (
       vec record {
         id : text;
@@ -77,5 +78,6 @@ service : {
         location : text;
       },
     ) query;
+  getFarmerByName : (text) -> (bool) query;
   getGreenHouseByName : (text) -> (bool) query;
 }

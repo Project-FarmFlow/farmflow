@@ -52,6 +52,10 @@ export interface _SERVICE {
     ],
     undefined
   >,
+  'createSensor' : ActorMethod<
+    [bigint, string, string, string, string],
+    undefined
+  >,
   'getAllFarmers' : ActorMethod<
     [],
     Array<
@@ -105,6 +109,7 @@ export interface _SERVICE {
       }
     >
   >,
+  'getFarmerByName' : ActorMethod<[string], boolean>,
   'getGreenHouseByName' : ActorMethod<[string], boolean>,
 }
 export declare const idlFactory: IDL.InterfaceFactory;
