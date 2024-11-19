@@ -1,4 +1,13 @@
 service : {
+  addSensor : (nat, nat, text, text, text) -> (
+      record {
+        id : nat;
+        name : text;
+        greenhouseId : text;
+        typeOfSensor : text;
+        condition : text;
+      },
+    );
   createFarmer : (
       text,
       text,

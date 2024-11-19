@@ -14,6 +14,7 @@ export default class {
   farmerIdToFarmer: Record<string, Farmer> = {};
   farmerIdToSensors: Record<string, Sensor[]> = {};
   greenHouseIdToSensors: Record<number, Sensor[]> = {};
+  greenHouseIdToGreenHouse: Record<number, GreenHouse> = {};
 
   // ** FARMER FUNCTIONS ** //
   // ** get farmer by name ** //
@@ -77,7 +78,7 @@ export default class {
   // ** get all farmers ** //
   @query([], IDL.Vec(Farmer.idlFactory))
   getAllFarmers(): Farmer[] {
-    return this.farmers;
+    return Object.values(this.farmerIdToFarmer);
   }
   // ** get farmer by ID ** //
   @query([IDL.Text], Farmer.idlFactory)
@@ -202,6 +203,14 @@ export default class {
     if (isAvailable) {
       throw new Error("Greenhouse already exists");
     } else {
+      this.greenHouseIdToGreenHouse[id] = new GreenHouse(
+        id,
+        name,
+        location,
+        farmerId,
+        sensors,
+        moistureLevel
+      );
       this.farmerIdToGreenHouse[farmerId] = new GreenHouse(
         id,
         name,
@@ -210,6 +219,15 @@ export default class {
         sensors,
         moistureLevel
       );
+      //find the farmer in the farmers array
+      const farmer = this.getFarmerById(farmerId);
+      //update the farmer's greenhouses array
+      farmer.greenhouses.push(
+        new GreenHouse(id, name, location, farmerId, sensors, moistureLevel)
+      );
+      //remove old farmer and insert the new one
+      this.farmers = this.farmers.filter((farmer) => farmer.id !== farmerId);
+      this.farmers.push(farmer);
       this.greenHouses.push(
         new GreenHouse(id, name, location, farmerId, sensors, moistureLevel)
       );
@@ -218,12 +236,13 @@ export default class {
   // ** get all greenhouse ** //
   @query([], IDL.Vec(GreenHouse.idlFactory))
   getAllGreenHouses(): GreenHouse[] {
-    return this.greenHouses;
+    return Object.values(this.greenHouseIdToGreenHouse);
   }
   @query([IDL.Nat], GreenHouse.idlFactory)
   getGreenHouseById(id: number): GreenHouse {
-    if (this.farmerIdToGreenHouse[id]) {
-      return this.farmerIdToGreenHouse[id];
+    const searchedGreenHouse = this.greenHouseIdToGreenHouse[id];
+    if (searchedGreenHouse) {
+      return searchedGreenHouse;
     } else {
       throw new Error("Greenhouse not found");
     }
@@ -328,25 +347,40 @@ export default class {
     greenhouseId: string,
     condition: string
   ): void {
-    if (this.getFarmerById(farmerID)) {
-      //check if the farmer has created this sensor before form the farmerIdToSensors mapping
-      if (this.farmerIdToSensors[farmerID]) {
-        if (
-          this.farmerIdToSensors[farmerID].find(
-            (sensor) => sensor.name === name
-          )
-        ) {
-          throw new Error("Sensor already exists");
-        } else {
-          this.farmerIdToSensors[farmerID].push(
-            new Sensor(id, name, typeOfSensor, greenhouseId, condition)
-          );
-          this.sensors.push(
-            new Sensor(id, name, typeOfSensor, greenhouseId, condition)
-          );
-        }
-      }
+    // Check if the farmer ID and greenhouse ID are valid
+    const farmer = this.getFarmerById(farmerID);
+    const greenhouse = this.getGreenHouseById(parseInt(greenhouseId));
+    if (!farmer) {
+      throw new Error("Farmer not found");
     }
+    if (!greenhouse) {
+      throw new Error("Greenhouse not found");
+    }
+
+    // Create sensor
+    const newSensor = new Sensor(
+      id,
+      name,
+      typeOfSensor,
+      greenhouseId,
+      condition
+    );
+
+    // Update mappings
+    if (!this.farmerIdToSensors[farmerID]) {
+      this.farmerIdToSensors[farmerID] = [];
+    }
+    this.farmerIdToSensors[farmerID].push(newSensor);
+
+    if (!this.greenHouseIdToSensors[parseInt(greenhouseId)]) {
+      this.greenHouseIdToSensors[parseInt(greenhouseId)] = [];
+    }
+    this.greenHouseIdToSensors[parseInt(greenhouseId)].push(newSensor);
+
+    this.sensors.push(newSensor);
+
+    // Update the greenhouse's sensors array
+    greenhouse.sensors.push(newSensor);
   }
   // ** update sensor condition ** //
   @update([IDL.Text, IDL.Nat, IDL.Text], Sensor.idlFactory)
