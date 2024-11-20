@@ -1,4 +1,5 @@
 service : {
+<<<<<<< HEAD
   addSensor : (nat, nat, text, text, text) -> (
       record {
         id : nat;
@@ -8,6 +9,8 @@ service : {
         condition : text;
       },
     );
+=======
+>>>>>>> frontend_stuff
   createFarmer : (
       text,
       text,
