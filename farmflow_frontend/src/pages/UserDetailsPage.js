@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import actor from "../utils/actor";
+import { authSubscribe } from "@junobuild/core";
 
 const UserDetailsPage = () => {
   const navigate = useNavigate();
@@ -12,13 +13,25 @@ const UserDetailsPage = () => {
     location: "",
   });
   const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    authSubscribe((user) => {
+      console.log("User:", user);
+      setUser(user);
+    });
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (user === null) {
+      alert("Please login to continue");
+      return;
+    }
     try {
       setLoading(true);
       await actor.createFarmer(
-        "1",
+        user.key,
         userDetails.name,
         userDetails.name,
         userDetails.email,
