@@ -17,7 +17,6 @@ const UserDetailsPage = () => {
 
   useEffect(() => {
     authSubscribe((user) => {
-      console.log("User:", user);
       setUser(user);
     });
   });
