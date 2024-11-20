@@ -8,6 +8,7 @@ export default class {
   farmers: Farmer[] = [];
   greenHouses: GreenHouse[] = [];
   sensors: Sensor[] = [];
+  sensorData: Record<string, Sensor[]> = {};
 
   // ** MAPPINGS ** //
   farmerIdToGreenHouse: Record<string, GreenHouse> = {};
