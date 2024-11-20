@@ -1,21 +1,54 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import actor from "../utils/actor";
 
 const UserDetailsPage = () => {
   const navigate = useNavigate();
   const [role, setRole] = useState("");
+  const [userDetails, setUserDetails] = useState({
+    name: "",
+    phoneNumber: "",
+    email: "",
+    location: "",
+  });
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (role === "Farmer") {
-      navigate("/farmer-form");
-    } else if (role === "Consumer") {
-      navigate("/consumer-form");
+    try {
+      setLoading(true);
+      await actor.createFarmer(
+        "1",
+        userDetails.name,
+        userDetails.name,
+        userDetails.email,
+        userDetails.phoneNumber,
+        userDetails.location,
+        "basic",
+        []
+      );
+      if (role === "Farmer") {
+        navigate("/farmer-form");
+      } else if (role === "Consumer") {
+        navigate("/consumer-form");
+      }
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
     }
   };
 
+  const LoadingOverlay = () => (
+    <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-md flex flex-col items-center justify-center z-50">
+      <span className="loading loading-dots loading-lg bg-green-500"></span>
+      <h1 className="text-white ml-4 text-lg">Loading...</h1>
+    </div>
+  );
+
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+    <div className="min-h-screen relative bg-gray-50 flex items-center justify-center">
+      {loading && <LoadingOverlay />}
       <form
         onSubmit={handleSubmit}
         className="bg-white p-8 rounded-lg shadow-md max-w-lg w-full"
@@ -29,14 +62,26 @@ const UserDetailsPage = () => {
             type="text"
             className="w-full p-2 border rounded"
             required
+            onChange={(e) =>
+              setUserDetails({
+                ...userDetails,
+                name: e.target.value,
+              })
+            }
           />
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700 mb-2">Contact Info:</label>
+          <label className="block text-gray-700 mb-2">Phone Number: </label>
           <input
             type="text"
             className="w-full p-2 border rounded"
             required
+            onChange={(e) =>
+              setUserDetails({
+                ...userDetails,
+                phoneNumber: e.target.value,
+              })
+            }
           />
         </div>
         <div className="mb-4">
@@ -45,6 +90,26 @@ const UserDetailsPage = () => {
             type="email"
             className="w-full p-2 border rounded"
             required
+            onChange={(e) =>
+              setUserDetails({
+                ...userDetails,
+                email: e.target.value,
+              })
+            }
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 mb-2">Location:</label>
+          <input
+            type="text"
+            className="w-full p-2 border rounded"
+            required
+            onChange={(e) =>
+              setUserDetails({
+                ...userDetails,
+                location: e.target.value,
+              })
+            }
           />
         </div>
         <div className="mb-6">

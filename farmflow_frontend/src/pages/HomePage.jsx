@@ -18,7 +18,7 @@ const HomePage = () => {
   };
 
   const LoadingOverlay = () => (
-    <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-md flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-md flex flex-col items-center justify-center z-50">
       <span className="loading loading-dots loading-lg bg-green-500"></span>
       <h1 className="text-white ml-4 text-lg">Loading...</h1>
     </div>
