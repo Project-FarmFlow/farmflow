@@ -8,20 +8,14 @@ export default class {
   farmers: Farmer[] = [];
   greenHouses: GreenHouse[] = [];
   sensors: Sensor[] = [];
-<<<<<<< HEAD
-=======
   sensorData: Record<string, Sensor[]> = {};
->>>>>>> frontend_stuff
 
   // ** MAPPINGS ** //
   farmerIdToGreenHouse: Record<string, GreenHouse> = {};
   farmerIdToFarmer: Record<string, Farmer> = {};
   farmerIdToSensors: Record<string, Sensor[]> = {};
   greenHouseIdToSensors: Record<number, Sensor[]> = {};
-<<<<<<< HEAD
   greenHouseIdToGreenHouse: Record<number, GreenHouse> = {};
-=======
->>>>>>> frontend_stuff
 
   // ** FARMER FUNCTIONS ** //
   // ** get farmer by name ** //
@@ -85,11 +79,8 @@ export default class {
   // ** get all farmers ** //
   @query([], IDL.Vec(Farmer.idlFactory))
   getAllFarmers(): Farmer[] {
-<<<<<<< HEAD
     return Object.values(this.farmerIdToFarmer);
-=======
     return this.farmers;
->>>>>>> frontend_stuff
   }
   // ** get farmer by ID ** //
   @query([IDL.Text], Farmer.idlFactory)
@@ -214,7 +205,6 @@ export default class {
     if (isAvailable) {
       throw new Error("Greenhouse already exists");
     } else {
-<<<<<<< HEAD
       this.greenHouseIdToGreenHouse[id] = new GreenHouse(
         id,
         name,
@@ -223,8 +213,6 @@ export default class {
         sensors,
         moistureLevel
       );
-=======
->>>>>>> frontend_stuff
       this.farmerIdToGreenHouse[farmerId] = new GreenHouse(
         id,
         name,
@@ -233,7 +221,6 @@ export default class {
         sensors,
         moistureLevel
       );
-<<<<<<< HEAD
       //find the farmer in the farmers array
       const farmer = this.getFarmerById(farmerId);
       //update the farmer's greenhouses array
@@ -243,8 +230,6 @@ export default class {
       //remove old farmer and insert the new one
       this.farmers = this.farmers.filter((farmer) => farmer.id !== farmerId);
       this.farmers.push(farmer);
-=======
->>>>>>> frontend_stuff
       this.greenHouses.push(
         new GreenHouse(id, name, location, farmerId, sensors, moistureLevel)
       );
@@ -253,22 +238,12 @@ export default class {
   // ** get all greenhouse ** //
   @query([], IDL.Vec(GreenHouse.idlFactory))
   getAllGreenHouses(): GreenHouse[] {
-<<<<<<< HEAD
     return Object.values(this.greenHouseIdToGreenHouse);
-  }
-  @query([IDL.Nat], GreenHouse.idlFactory)
-  getGreenHouseById(id: number): GreenHouse {
-    const searchedGreenHouse = this.greenHouseIdToGreenHouse[id];
-    if (searchedGreenHouse) {
-      return searchedGreenHouse;
-=======
-    return this.greenHouses;
   }
   @query([IDL.Nat], GreenHouse.idlFactory)
   getGreenHouseById(id: number): GreenHouse {
     if (this.farmerIdToGreenHouse[id]) {
       return this.farmerIdToGreenHouse[id];
->>>>>>> frontend_stuff
     } else {
       throw new Error("Greenhouse not found");
     }
@@ -373,7 +348,6 @@ export default class {
     greenhouseId: string,
     condition: string
   ): void {
-<<<<<<< HEAD
     // Check if the farmer ID and greenhouse ID are valid
     const farmer = this.getFarmerById(farmerID);
     const greenhouse = this.getGreenHouseById(parseInt(greenhouseId));
@@ -408,7 +382,6 @@ export default class {
 
     // Update the greenhouse's sensors array
     greenhouse.sensors.push(newSensor);
-=======
     if (this.getFarmerById(farmerID)) {
       //check if the farmer has created this sensor before form the farmerIdToSensors mapping
       if (this.farmerIdToSensors[farmerID]) {
@@ -428,7 +401,6 @@ export default class {
         }
       }
     }
->>>>>>> frontend_stuff
   }
   // ** update sensor condition ** //
   @update([IDL.Text, IDL.Nat, IDL.Text], Sensor.idlFactory)
@@ -458,10 +430,3 @@ export default class {
     return sensorToUpdate;
   }
 }
-<<<<<<< HEAD
-=======
-
-//TO-DO
-// => update mappings for farmers to show the greenhouses they own
-// => update mappings for greenhouses to show the sensors they have
->>>>>>> frontend_stuff
