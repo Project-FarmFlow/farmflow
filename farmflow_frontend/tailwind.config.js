@@ -35,5 +35,6 @@ module.exports = {
     // Tailwind CSS plugins for typography and forms (optional)
     require("@tailwindcss/typography"),
     require("@tailwindcss/forms"),
+    require("daisyui"),
   ],
 };

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import Dashboard from "./pages/Dashboard";
@@ -12,8 +12,16 @@ import Navbar from "./components/Navbar";
 import UserDetailsPage from "./pages/UserDetailsPage";
 import FarmerForm from "./pages/FarmerForm";
 import ConsumerForm from "./pages/ConsumerForm";
+import { initSatellite } from "@junobuild/core";
 
 function App() {
+  useEffect(() => {
+    (async () =>
+      await initSatellite({
+        satelliteId: "eymid-eaaaa-aaaal-arr7a-cai",
+      }))();
+  }, []);
+
   return (
     <Router>
       <div className="min-h-screen bg-gray-50">
@@ -25,8 +33,10 @@ function App() {
             <Route path="/contact-us" element={<ContactUs />} />
             <Route path="/notifications" element={<NotificationPage />} />
             <Route path="/about-us" element={<AboutUsPage />} />
-            <Route path="/profile" element={<ProfilePage />} /> {/* Profile Page */}
-            <Route path="/marketplace" element={<MarketplacePage />} /> {/* Marketplace Page */}
+            <Route path="/profile" element={<ProfilePage />} />{" "}
+            {/* Profile Page */}
+            <Route path="/marketplace" element={<MarketplacePage />} />{" "}
+            {/* Marketplace Page */}
             <Route path="/user-details" element={<UserDetailsPage />} />
             <Route path="/farmer-form" element={<FarmerForm />} />
             <Route path="/consumer-form" element={<ConsumerForm />} />
