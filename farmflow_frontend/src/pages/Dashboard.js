@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { authSubscribe } from "@junobuild/core";
+import { authSubscribe, signOut } from "@junobuild/core";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -80,19 +80,29 @@ const Dashboard = () => {
   };
 
   const LoadingOverlay = () => (
-    <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-md flex flex-col items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex flex-col items-center justify-center z-50">
       <h1 className="text-white ml-4 text-lg">Not logged in.</h1>
-      <button className="bg-green-500 py-4 px-8" onClick={() => navigate("/")}>
+      <button
+        className="bg-green-500 rounded-md font-bold text-lg py-2 px-8"
+        onClick={() => navigate("/")}
+      >
         Home
       </button>
     </div>
   );
 
+  if (!user) {
+    return (
+      <div className="min-h-screen relative bg-gray-50 flex items-center justify-center">
+        <LoadingOverlay />
+      </div>
+    );
+  }
+
   // Render "Add Farm/Greenhouse" page
   if (showAddFarmPage) {
     return (
-      <div className="bg-gray-50 relative min-h-screen py-6 px-6">
-        {!user && <LoadingOverlay />}
+      <div className="bg-gray-50 min-h-screen py-6 px-6">
         <section className="bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-3xl font-semibold text-green-600 mb-4">
             Add Farm or Greenhouse
@@ -262,7 +272,8 @@ const Dashboard = () => {
 
   // Render main Dashboard
   return (
-    <div className="bg-gray-50 min-h-screen py-6 px-6">
+    <div className="bg-gray-50 relative min-h-screen py-6 px-6">
+      {!user && <LoadingOverlay />}
       <section className="bg-white p-6 rounded-lg shadow-md mb-8">
         <h2 className="text-3xl font-semibold text-green-600 mb-4">
           My Farms/Greenhouses
