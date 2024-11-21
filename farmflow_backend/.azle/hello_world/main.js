@@ -5173,15 +5173,13 @@ var src_default = class {
     this.farmers = [];
     this.greenHouses = [];
     this.sensors = [];
+    this.sensorData = {};
     // ** MAPPINGS ** //
     this.farmerIdToGreenHouse = {};
     this.farmerIdToFarmer = {};
     this.farmerIdToSensors = {};
     this.greenHouseIdToSensors = {};
-<<<<<<< HEAD
     this.greenHouseIdToGreenHouse = {};
-=======
->>>>>>> frontend_stuff
   }
   getFarmerByName(name) {
     if (this.farmers.find((farmer) => farmer.username === name)) {
@@ -5220,11 +5218,8 @@ var src_default = class {
     }
   }
   getAllFarmers() {
-<<<<<<< HEAD
     return Object.values(this.farmerIdToFarmer);
-=======
     return this.farmers;
->>>>>>> frontend_stuff
   }
   getFarmerById(id2) {
     if (this.farmerIdToFarmer[id2]) {
@@ -5296,7 +5291,6 @@ var src_default = class {
     if (isAvailable) {
       throw new Error("Greenhouse already exists");
     } else {
-<<<<<<< HEAD
       this.greenHouseIdToGreenHouse[id2] = new GreenHouse(
         id2,
         name,
@@ -5305,8 +5299,6 @@ var src_default = class {
         sensors,
         moistureLevel
       );
-=======
->>>>>>> frontend_stuff
       this.farmerIdToGreenHouse[farmerId] = new GreenHouse(
         id2,
         name,
@@ -5315,35 +5307,23 @@ var src_default = class {
         sensors,
         moistureLevel
       );
-<<<<<<< HEAD
       const farmer = this.getFarmerById(farmerId);
       farmer.greenhouses.push(
         new GreenHouse(id2, name, location, farmerId, sensors, moistureLevel)
       );
       this.farmers = this.farmers.filter((farmer2) => farmer2.id !== farmerId);
       this.farmers.push(farmer);
-=======
->>>>>>> frontend_stuff
       this.greenHouses.push(
         new GreenHouse(id2, name, location, farmerId, sensors, moistureLevel)
       );
     }
   }
   getAllGreenHouses() {
-<<<<<<< HEAD
     return Object.values(this.greenHouseIdToGreenHouse);
-  }
-  getGreenHouseById(id2) {
-    const searchedGreenHouse = this.greenHouseIdToGreenHouse[id2];
-    if (searchedGreenHouse) {
-      return searchedGreenHouse;
-=======
-    return this.greenHouses;
   }
   getGreenHouseById(id2) {
     if (this.farmerIdToGreenHouse[id2]) {
       return this.farmerIdToGreenHouse[id2];
->>>>>>> frontend_stuff
     } else {
       throw new Error("Greenhouse not found");
     }
@@ -5406,7 +5386,6 @@ var src_default = class {
     return createdSensor;
   }
   createSensor(farmerID, id2, name, typeOfSensor, greenhouseId, condition) {
-<<<<<<< HEAD
     const farmer = this.getFarmerById(farmerID);
     const greenhouse = this.getGreenHouseById(parseInt(greenhouseId));
     if (!farmer) {
@@ -5432,7 +5411,6 @@ var src_default = class {
     this.greenHouseIdToSensors[parseInt(greenhouseId)].push(newSensor);
     this.sensors.push(newSensor);
     greenhouse.sensors.push(newSensor);
-=======
     if (this.getFarmerById(farmerID)) {
       if (this.farmerIdToSensors[farmerID]) {
         if (this.farmerIdToSensors[farmerID].find(
@@ -5449,7 +5427,6 @@ var src_default = class {
         }
       }
     }
->>>>>>> frontend_stuff
   }
   updateSensorCondition(farmerId, sensorId, condition) {
     if (condition !== "good" && condition !== "bad") {
