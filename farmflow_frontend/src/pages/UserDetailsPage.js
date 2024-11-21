@@ -40,7 +40,7 @@ const UserDetailsPage = () => {
         []
       );
       if (role === "Farmer") {
-        navigate("/farmer-form");
+        navigate("/dashboard");
       } else if (role === "Consumer") {
         navigate("/consumer-form");
       }
@@ -123,6 +123,10 @@ const UserDetailsPage = () => {
               })
             }
           />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 mb-2">Farm Size:</label>
+          <input type="text" className="w-full p-2 border rounded" />
         </div>
         <div className="mb-6">
           <label className="block text-gray-700 mb-2">Role:</label>
