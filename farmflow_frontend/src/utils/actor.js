@@ -47,6 +47,11 @@ const actor = Actor.createActor(
         [],
         []
       ),
+      createGreenHouse: IDL.Func(
+        [IDL.Nat, IDL.Text, IDL.Text, IDL.Vec(SensorIDLFactory(IDL)), IDL.Nat],
+        [],
+        []
+      ),
     });
   },
   { agent, canisterId }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { authSubscribe, signOut } from "@junobuild/core";
+import actor from "../utils/actor";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -36,12 +37,7 @@ const Dashboard = () => {
 
   // Function to handle form submission
   const handleAddFarm = () => {
-    if (
-      newFarm.name &&
-      newFarm.location &&
-      newFarm.crop &&
-      newFarm.sensors.length > 0
-    ) {
+    if (newFarm.name && newFarm.location && newFarm.crop) {
       setFarms([...farms, newFarm]);
       setShowAddFarmPage(false);
     } else {
@@ -79,7 +75,7 @@ const Dashboard = () => {
     });
   };
 
-  const LoadingOverlay = () => (
+  const NoUserOverLay = () => (
     <div className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex flex-col items-center justify-center z-50">
       <h1 className="text-white ml-4 text-lg">Not logged in.</h1>
       <button
@@ -91,10 +87,17 @@ const Dashboard = () => {
     </div>
   );
 
+  const LoadingOverlay = () => (
+    <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-md flex flex-col items-center justify-center z-50">
+      <span className="loading loading-dots loading-lg bg-green-500"></span>
+      <h1 className="text-white ml-4 text-lg">Loading...</h1>
+    </div>
+  );
+
   if (!user) {
     return (
       <div className="min-h-screen relative bg-gray-50 flex items-center justify-center">
-        <LoadingOverlay />
+        <NoUserOverLay />
       </div>
     );
   }
