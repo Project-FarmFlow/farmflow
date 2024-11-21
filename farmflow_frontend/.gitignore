@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Logs
 logs
 *.log
@@ -47,4 +46,3 @@ dist-ssr
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
->>>>>>> frontend_stuff
