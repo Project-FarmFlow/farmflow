@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import actor from "../utils/actor";
 import farmImage from "../utils/images";
 import SensorDashboard from "./SensorDashboard";
+import { authSubscribe, signOut } from "@junobuild/core";
+import generateRandomNumber from "../utils/random";
 
 function FarmDetails() {
   const { id } = useParams();
@@ -41,6 +43,136 @@ function FarmDetails() {
   }
   console.log(farm);
 
+  const AddSensorModal = () => {
+    const [sensorDetails, setSensorDetails] = useState({
+      name: "",
+      type: "",
+      condition: "",
+    });
+    const [loading, setLoading] = useState(false);
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+      authSubscribe((user) => {
+        setUser(user);
+      });
+    });
+
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      if (
+        sensorDetails.name === "" ||
+        sensorDetails.type === "" ||
+        sensorDetails.condition === ""
+      ) {
+        alert("Please fill all fields");
+        return;
+      }
+      if (user === null) {
+        alert("Please login to continue");
+        return;
+      }
+      try {
+        setLoading(true);
+        await actor.createSensor(
+          user.key,
+          generateRandomNumber(),
+          sensorDetails.name,
+          sensorDetails.type,
+          id,
+          sensorDetails.condition
+        );
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+        console.error(error);
+      }
+    };
+
+    return (
+      <dialog id="my_modal_1" className="modal">
+        {loading ? (
+          <span className="loading loading-dots loading-lg bg-green-500"></span>
+        ) : (
+          <div className="modal-box">
+            <h3 className="font-bold text-lg">Add Sensor</h3>
+            <p className="py-4">
+              Press ESC key or click the button below to close
+            </p>
+            <div className="modal-action">
+              <form
+                onSubmit={handleSubmit}
+                className="bg-white p-8 rounded-lg shadow-md max-w-lg w-full"
+              >
+                <h2 className="text-2xl font-bold text-green-600 text-center">
+                  Choose sensor details
+                </h2>
+                <div className="mb-4">
+                  <label className="block text-gray-700 mb-2">Name:</label>
+                  <input
+                    type="text"
+                    className="w-full p-2 border rounded"
+                    required
+                    onChange={(e) =>
+                      setSensorDetails({
+                        ...sensorDetails,
+                        name: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div className="mb-6">
+                  <label className="block text-gray-700 mb-2">Type:</label>
+                  <select
+                    value={sensorDetails.type}
+                    onChange={(e) =>
+                      setSensorDetails({
+                        ...sensorDetails,
+                        type: e.target.value,
+                      })
+                    }
+                    className="w-full p-2 border rounded"
+                    required
+                  >
+                    <option value="">Select sensor type:</option>
+                    <option value="Farmer">Temperature</option>
+                    <option value="Consumer">Humidity</option>
+                    <option value="Consumer">Soil Moisture</option>
+                    <option value="Consumer">Soil pH</option>
+                  </select>
+                </div>
+                <div className="mb-6">
+                  <label className="block text-gray-700 mb-2">Condition:</label>
+                  <select
+                    value={sensorDetails.condition}
+                    onChange={(e) =>
+                      setSensorDetails({
+                        ...sensorDetails,
+                        condition: e.target.value,
+                      })
+                    }
+                    className="w-full p-2 border rounded"
+                    required
+                  >
+                    <option value="">Select sensor condition</option>
+                    <option value="Farmer">Good</option>
+                    <option value="Consumer">Average</option>
+                  </select>
+                </div>
+                <button
+                  type="submit"
+                  className="w-full bg-green-600 text-white p-3 rounded hover:bg-green-700 transition"
+                >
+                  Add Sensor
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
+      </dialog>
+    );
+  };
+
   return (
     <div className="">
       <div>
@@ -53,7 +185,14 @@ function FarmDetails() {
         <p className="text-black my-4">Farm Name: {farm.name}</p>
         <p className="text-black my-4">Farm Location: {farm.location}</p>
         <p className="text-black my-4">Sensors: {farm.sensors.length}</p>
-        <SensorDashboard />
+        {farm.sensors.length > 0 ? <SensorDashboard /> : null}
+        <button
+          className="btn"
+          onClick={() => document.getElementById("my_modal_1").showModal()}
+        >
+          Add Sensor
+        </button>
+        <AddSensorModal />
       </div>
     </div>
   );

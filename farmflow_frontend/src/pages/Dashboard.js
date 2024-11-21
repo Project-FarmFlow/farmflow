@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { authSubscribe, signOut } from "@junobuild/core";
 import actor from "../utils/actor";
 import farmImage from "../utils/images";
+import generateRandomNumber from "../utils/random";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -55,10 +56,6 @@ const Dashboard = () => {
     "Soil Moisture",
     "Soil pH",
   ];
-
-  const generateRandomNumber = () => {
-    return Math.floor(Math.random() * 100);
-  };
 
   // Function to handle form submission
   const handleAddFarm = () => {

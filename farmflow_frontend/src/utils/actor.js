@@ -72,6 +72,11 @@ const actor = Actor.createActor(
         [],
         []
       ),
+      createSensor: IDL.Func(
+        [IDL.Text, IDL.Nat, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+        [],
+        []
+      ),
       getFarmerById: IDL.Func([IDL.Text], [FarmerIDLFactory(IDL)], []),
       getGreenHouseById: IDL.Func([IDL.Nat], [GreenHouseIDLFactory(IDL)], []),
     });
