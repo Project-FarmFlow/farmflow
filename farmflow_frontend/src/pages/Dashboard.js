@@ -2,22 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { authSubscribe, signOut } from "@junobuild/core";
 import actor from "../utils/actor";
+import farmImage from "../utils/images";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    authSubscribe((user) => {
-      setUser(user);
-    });
-  });
-
-  // State for farms/greenhouses
-  const [farms, setFarms] = useState([]);
-  const [showAddFarmPage, setShowAddFarmPage] = useState(false);
-
-  // Temporary form state for adding farm/greenhouse
   const [newFarm, setNewFarm] = useState({
     type: "farm", // or "greenhouse"
     name: "",
@@ -26,6 +15,38 @@ const Dashboard = () => {
     sensors: [],
     image: null,
   });
+  // State for farms/greenhouses
+  const [farms, setFarms] = useState([]);
+  const [showAddFarmPage, setShowAddFarmPage] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const fetchFarmerDetails = async (id) => {
+    if (!id) {
+      alert("Please login to continue");
+      return;
+    }
+    try {
+      setLoading(true);
+      const farmer = await actor.getFarmerById(id);
+      setFarms(farmer.greenhouses);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    authSubscribe((user) => {
+      setUser(user);
+    });
+  });
+
+  useEffect(() => {
+    if (user) {
+      fetchFarmerDetails(user.key);
+    }
+  }, [user]);
 
   // Available parameters
   const availableParameters = [
@@ -35,15 +56,33 @@ const Dashboard = () => {
     "Soil pH",
   ];
 
+  const generateRandomNumber = () => {
+    return Math.floor(Math.random() * 100);
+  };
+
   // Function to handle form submission
   const handleAddFarm = () => {
-    if (newFarm.name && newFarm.location && newFarm.crop) {
-      setFarms([...farms, newFarm]);
-      setShowAddFarmPage(false);
-    } else {
-      alert(
-        "Please fill out all required fields and select at least one parameter."
-      );
+    try {
+      setLoading(true);
+      if (newFarm.name && newFarm.location && newFarm.crop) {
+        actor.createGreenHouse(
+          generateRandomNumber(),
+          newFarm.name,
+          newFarm.location,
+          user.key,
+          [],
+          50.64
+        );
+        setLoading(false);
+        setShowAddFarmPage(false);
+      } else {
+        alert(
+          "Please fill out all required fields and select at least one parameter."
+        );
+      }
+    } catch (error) {
+      setLoading(false);
+      console.error(error);
     }
   };
 
@@ -254,7 +293,8 @@ const Dashboard = () => {
   // Render initial "Get Started" page if no farms exist
   if (farms.length === 0) {
     return (
-      <div className="bg-gray-50 min-h-screen py-6 px-6">
+      <div className="bg-gray-50 relative min-h-screen py-6 px-6">
+        {loading && <LoadingOverlay />}
         <section className="bg-white p-6 rounded-lg shadow-md text-center">
           <h2 className="text-3xl font-semibold text-green-600 mb-4">
             Welcome to your Dashboard!
@@ -279,32 +319,30 @@ const Dashboard = () => {
       {!user && <LoadingOverlay />}
       <section className="bg-white p-6 rounded-lg shadow-md mb-8">
         <h2 className="text-3xl font-semibold text-green-600 mb-4">
-          My Farms/Greenhouses
+          My Greenhouses
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {farms.map((farm, index) => (
             <div
               key={index}
-              onClick={() => navigate(`/farm/${index}`)} // Navigate to farm details
+              onClick={() => navigate(`/farm/${farm.id}`)} // Navigate to farm details
               className="cursor-pointer bg-white p-6 rounded-lg shadow-md hover:shadow-lg"
             >
               {/* Image at the top of the card */}
-              {farm.image && (
-                <img
-                  src={farm.image}
-                  alt="Farm Preview"
-                  className="w-full mb-4 rounded-lg"
-                />
-              )}
+
+              <img
+                src={farmImage}
+                alt="Farm Preview"
+                className="w-full mb-4 rounded-lg"
+              />
+
               <h3 className="text-xl font-semibold text-gray-700">
                 {farm.name}
               </h3>
-              <p className="text-gray-600">
-                {farm.type === "farm" ? "Farm" : "Greenhouse"}
-              </p>
-              <p className="text-gray-600">{farm.crop}</p>
+              <p className="text-gray-600">GreenHouse🚜</p>
+              <p className="text-gray-600">Any</p>
               <p className="text-gray-600">{farm.location}</p>
-              <p className="text-gray-600">{farm.sensors.join(", ")}</p>
+              <p className="text-gray-600">Sensors</p>
             </div>
           ))}
         </div>

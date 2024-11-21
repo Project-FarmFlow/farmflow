@@ -5322,8 +5322,8 @@ var src_default = class {
     return Object.values(this.greenHouseIdToGreenHouse);
   }
   getGreenHouseById(id2) {
-    if (this.farmerIdToGreenHouse[id2]) {
-      return this.farmerIdToGreenHouse[id2];
+    if (this.greenHouseIdToGreenHouse[id2]) {
+      return this.greenHouseIdToGreenHouse[id2];
     } else {
       throw new Error("Greenhouse not found");
     }

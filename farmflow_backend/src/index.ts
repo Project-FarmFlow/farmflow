@@ -242,8 +242,8 @@ export default class {
   }
   @query([IDL.Nat], GreenHouse.idlFactory)
   getGreenHouseById(id: number): GreenHouse {
-    if (this.farmerIdToGreenHouse[id]) {
-      return this.farmerIdToGreenHouse[id];
+    if (this.greenHouseIdToGreenHouse[id]) {
+      return this.greenHouseIdToGreenHouse[id];
     } else {
       throw new Error("Greenhouse not found");
     }

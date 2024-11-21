@@ -13,6 +13,7 @@ import UserDetailsPage from "./pages/UserDetailsPage";
 import FarmerForm from "./pages/FarmerForm";
 import ConsumerForm from "./pages/ConsumerForm";
 import { initSatellite } from "@junobuild/core";
+import FarmDetails from "./pages/FarmDetails";
 
 function App() {
   useEffect(() => {
@@ -40,6 +41,7 @@ function App() {
             <Route path="/user-details" element={<UserDetailsPage />} />
             <Route path="/farmer-form" element={<FarmerForm />} />
             <Route path="/consumer-form" element={<ConsumerForm />} />
+            <Route path="/farm/:id" element={<FarmDetails />} />
           </Routes>
         </main>
         <footer className="bg-white border-t mt-auto">
