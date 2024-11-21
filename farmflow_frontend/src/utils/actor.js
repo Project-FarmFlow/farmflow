@@ -30,6 +30,19 @@ const GreenHouseIDLFactory = (IDL) => {
   });
 };
 
+const FarmerIDLFactory = (IDL) => {
+  return IDL.Record({
+    id: IDL.Text,
+    username: IDL.Text,
+    password: IDL.Text,
+    email: IDL.Text,
+    phone: IDL.Text,
+    location: IDL.Text,
+    subscription: IDL.Text,
+    greenhouses: IDL.Vec(GreenHouseIDLFactory(IDL)),
+  });
+};
+
 const actor = Actor.createActor(
   ({ IDL }) => {
     return IDL.Service({
@@ -47,6 +60,25 @@ const actor = Actor.createActor(
         [],
         []
       ),
+      createGreenHouse: IDL.Func(
+        [
+          IDL.Nat,
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Vec(SensorIDLFactory(IDL)),
+          IDL.Float64,
+        ],
+        [],
+        []
+      ),
+      createSensor: IDL.Func(
+        [IDL.Text, IDL.Nat, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+        [],
+        []
+      ),
+      getFarmerById: IDL.Func([IDL.Text], [FarmerIDLFactory(IDL)], []),
+      getGreenHouseById: IDL.Func([IDL.Nat], [GreenHouseIDLFactory(IDL)], []),
     });
   },
   { agent, canisterId }
