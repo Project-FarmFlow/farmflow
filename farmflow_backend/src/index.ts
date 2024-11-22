@@ -2,6 +2,7 @@ import { IDL, query, update } from "azle";
 import Farmer from "./Farmer";
 import GreenHouse from "./GreenHouse";
 import Sensor from "./Sensor";
+import Data from "./Data";
 
 export default class {
   // ** STORAGE & IDENTIFIERS ** //
@@ -352,6 +353,13 @@ export default class {
     if (!greenhouse) {
       throw new Error("Greenhouse not found");
     }
+    //check if the sensor already exists in the greenhouse, i.e the type is same to any in the sensors[]
+    const sensorExists = greenhouse.sensors.find(
+      (sensor) => sensor.name === name
+    );
+    if (sensorExists) {
+      throw new Error("Sensor already exists");
+    }
 
     const newSensor = new Sensor(
       id,
@@ -405,5 +413,30 @@ export default class {
       throw new Error("Sensor not found");
     }
     return sensorToUpdate;
+  }
+
+  // ** DATA FUNCTIONS **//
+  // ** get historical data ** //
+  @query([IDL.Text, IDL.Nat], IDL.Vec(Data.idlFactory))
+  getHistoricalData(sensorName: string, greenHouseId: number): Data[] {
+    const allSensors = this.greenHouseIdToGreenHouse[greenHouseId].sensors;
+    const sensor = allSensors.find((sensor) => sensor.name === sensorName);
+    if (sensor) {
+      return sensor.data;
+    } else {
+      throw new Error("Sensor not found");
+    }
+  }
+
+  // ** get sensor readings ** //
+  @query([IDL.Text, IDL.Nat], Data.idlFactory)
+  getSensorReadings(sensorName: string, greenHouseId: number): Data {
+    const allSensors = this.greenHouseIdToGreenHouse[greenHouseId].sensors;
+    const sensor = allSensors.find((sensor) => sensor.name === sensorName);
+    if (sensor) {
+      return sensor.data[sensor.data.length - 1];
+    } else {
+      throw new Error("Sensor not found");
+    }
   }
 }
