@@ -1,13 +1,4 @@
 service : () -> {
-  addSensor : (nat, nat, text, text, text) -> (
-      record {
-        id : nat;
-        name : text;
-        greenhouseId : text;
-        typeOfSensor : text;
-        condition : text;
-      },
-    );
   createFarmer : (
       text,
       text,
@@ -23,6 +14,7 @@ service : () -> {
         name : text;
         sensors : vec record {
           id : nat;
+          data : vec record { data : nat; timestamp : text };
           name : text;
           greenhouseId : text;
           typeOfSensor : text;
@@ -38,6 +30,7 @@ service : () -> {
       text,
       vec record {
         id : nat;
+        data : vec record { data : nat; timestamp : text };
         name : text;
         greenhouseId : text;
         typeOfSensor : text;
@@ -62,6 +55,7 @@ service : () -> {
           name : text;
           sensors : vec record {
             id : nat;
+            data : vec record { data : nat; timestamp : text };
             name : text;
             greenhouseId : text;
             typeOfSensor : text;
@@ -79,6 +73,7 @@ service : () -> {
         name : text;
         sensors : vec record {
           id : nat;
+          data : vec record { data : nat; timestamp : text };
           name : text;
           greenhouseId : text;
           typeOfSensor : text;
@@ -103,6 +98,7 @@ service : () -> {
           name : text;
           sensors : vec record {
             id : nat;
+            data : vec record { data : nat; timestamp : text };
             name : text;
             greenhouseId : text;
             typeOfSensor : text;
@@ -121,6 +117,7 @@ service : () -> {
         name : text;
         sensors : vec record {
           id : nat;
+          data : vec record { data : nat; timestamp : text };
           name : text;
           greenhouseId : text;
           typeOfSensor : text;
@@ -146,6 +143,7 @@ service : () -> {
           name : text;
           sensors : vec record {
             id : nat;
+            data : vec record { data : nat; timestamp : text };
             name : text;
             greenhouseId : text;
             typeOfSensor : text;
@@ -163,6 +161,7 @@ service : () -> {
         name : text;
         sensors : vec record {
           id : nat;
+          data : vec record { data : nat; timestamp : text };
           name : text;
           greenhouseId : text;
           typeOfSensor : text;
@@ -174,6 +173,7 @@ service : () -> {
   updateSensorCondition : (text, nat, text) -> (
       record {
         id : nat;
+        data : vec record { data : nat; timestamp : text };
         name : text;
         greenhouseId : text;
         typeOfSensor : text;

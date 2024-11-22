@@ -5084,14 +5084,27 @@ var DidVisitor = class extends idl_exports.Visitor {
   }
 };
 
+// src/Data.ts
+var Data = class {
+  constructor(data, timestamp) {
+    this.data = data;
+    this.timestamp = timestamp;
+  }
+};
+Data.idlFactory = idl_exports.Record({
+  data: idl_exports.Nat,
+  timestamp: idl_exports.Text
+});
+
 // src/Sensor.ts
 var Sensor = class {
-  constructor(id2, name, typeOfSensor, greenhouseId, condition) {
+  constructor(id2, name, typeOfSensor, greenhouseId, condition, data) {
     this.id = id2;
     this.name = name;
     this.typeOfSensor = typeOfSensor;
     this.greenhouseId = greenhouseId;
     this.condition = condition;
+    this.data = data;
   }
 };
 Sensor.idlFactory = idl_exports.Record({
@@ -5099,7 +5112,8 @@ Sensor.idlFactory = idl_exports.Record({
   name: idl_exports.Text,
   typeOfSensor: idl_exports.Text,
   greenhouseId: idl_exports.Text,
-  condition: idl_exports.Text
+  condition: idl_exports.Text,
+  data: idl_exports.Vec(Data.idlFactory)
 });
 
 // src/GreenHouse.ts
@@ -5148,7 +5162,7 @@ Farmer.idlFactory = idl_exports.Record({
 var Farmer_default = Farmer;
 
 // src/index.ts
-var _updateSensorCondition_dec, _createSensor_dec, _addSensor_dec, _updateGreenHouseDetails_dec, _getGreenHouseById_dec, _getAllGreenHouses_dec, _createGreenHouse_dec, _getGreenHouseByName_dec, _updateFarmerDetails_dec, _getFarmerById_dec, _getAllFarmers_dec, _createFarmer_dec, _getFarmerByName_dec, _init;
+var _updateSensorCondition_dec, _createSensor_dec, _updateGreenHouseDetails_dec, _getGreenHouseById_dec, _getAllGreenHouses_dec, _createGreenHouse_dec, _getGreenHouseByName_dec, _updateFarmerDetails_dec, _getFarmerById_dec, _getAllFarmers_dec, _createFarmer_dec, _getFarmerByName_dec, _init;
 _getFarmerByName_dec = [query([idl_exports.Text], idl_exports.Bool)], _createFarmer_dec = [update([
   idl_exports.Text,
   idl_exports.Text,
@@ -5165,7 +5179,7 @@ _getFarmerByName_dec = [query([idl_exports.Text], idl_exports.Bool)], _createFar
   idl_exports.Text,
   idl_exports.Vec(Sensor.idlFactory),
   idl_exports.Float64
-])], _getAllGreenHouses_dec = [query([], idl_exports.Vec(GreenHouse.idlFactory))], _getGreenHouseById_dec = [query([idl_exports.Nat], GreenHouse.idlFactory)], _updateGreenHouseDetails_dec = [update([idl_exports.Nat, idl_exports.Text, idl_exports.Text], GreenHouse.idlFactory)], _addSensor_dec = [update([idl_exports.Nat, idl_exports.Nat, idl_exports.Text, idl_exports.Text, idl_exports.Text], Sensor.idlFactory)], _createSensor_dec = [update([idl_exports.Text, idl_exports.Nat, idl_exports.Text, idl_exports.Text, idl_exports.Text, idl_exports.Text])], _updateSensorCondition_dec = [update([idl_exports.Text, idl_exports.Nat, idl_exports.Text], Sensor.idlFactory)];
+])], _getAllGreenHouses_dec = [query([], idl_exports.Vec(GreenHouse.idlFactory))], _getGreenHouseById_dec = [query([idl_exports.Nat], GreenHouse.idlFactory)], _updateGreenHouseDetails_dec = [update([idl_exports.Nat, idl_exports.Text, idl_exports.Text], GreenHouse.idlFactory)], _createSensor_dec = [update([idl_exports.Text, idl_exports.Nat, idl_exports.Text, idl_exports.Text, idl_exports.Text, idl_exports.Text])], _updateSensorCondition_dec = [update([idl_exports.Text, idl_exports.Nat, idl_exports.Text], Sensor.idlFactory)];
 var src_default = class {
   constructor() {
     __runInitializers(_init, 5, this);
@@ -5364,33 +5378,8 @@ var src_default = class {
     }
     return greenhouseToUpdate;
   }
-  addSensor(greenHouseId, sensorId, sensorName, typeOfSensor, conditionOfSensor) {
-    if (!this.getGreenHouseById(greenHouseId)) {
-      throw new Error("Greenhouse not found");
-    }
-    if (this.greenHouseIdToSensors[greenHouseId].find(
-      (sensor) => sensor.name === sensorName
-    )) {
-      throw new Error("Sensor already exists");
-    }
-    let createdSensor;
-    createdSensor = new Sensor(
-      sensorId,
-      sensorName,
-      typeOfSensor,
-      greenHouseId.toString(),
-      conditionOfSensor
-    );
-    this.greenHouseIdToSensors[greenHouseId].push(createdSensor);
-    this.sensors.push(createdSensor);
-    return createdSensor;
-  }
   createSensor(farmerID, id2, name, typeOfSensor, greenhouseId, condition) {
-    const farmer = this.getFarmerById(farmerID);
     const greenhouse = this.getGreenHouseById(parseInt(greenhouseId));
-    if (!farmer) {
-      throw new Error("Farmer not found");
-    }
     if (!greenhouse) {
       throw new Error("Greenhouse not found");
     }
@@ -5399,8 +5388,10 @@ var src_default = class {
       name,
       typeOfSensor,
       greenhouseId,
-      condition
+      condition,
+      []
     );
+    greenhouse.sensors.push(newSensor);
     if (!this.farmerIdToSensors[farmerID]) {
       this.farmerIdToSensors[farmerID] = [];
     }
@@ -5410,23 +5401,6 @@ var src_default = class {
     }
     this.greenHouseIdToSensors[parseInt(greenhouseId)].push(newSensor);
     this.sensors.push(newSensor);
-    greenhouse.sensors.push(newSensor);
-    if (this.getFarmerById(farmerID)) {
-      if (this.farmerIdToSensors[farmerID]) {
-        if (this.farmerIdToSensors[farmerID].find(
-          (sensor) => sensor.name === name
-        )) {
-          throw new Error("Sensor already exists");
-        } else {
-          this.farmerIdToSensors[farmerID].push(
-            new Sensor(id2, name, typeOfSensor, greenhouseId, condition)
-          );
-          this.sensors.push(
-            new Sensor(id2, name, typeOfSensor, greenhouseId, condition)
-          );
-        }
-      }
-    }
   }
   updateSensorCondition(farmerId, sensorId, condition) {
     if (condition !== "good" && condition !== "bad") {
@@ -5459,7 +5433,6 @@ __decorateElement(_init, 1, "createGreenHouse", _createGreenHouse_dec, src_defau
 __decorateElement(_init, 1, "getAllGreenHouses", _getAllGreenHouses_dec, src_default);
 __decorateElement(_init, 1, "getGreenHouseById", _getGreenHouseById_dec, src_default);
 __decorateElement(_init, 1, "updateGreenHouseDetails", _updateGreenHouseDetails_dec, src_default);
-__decorateElement(_init, 1, "addSensor", _addSensor_dec, src_default);
 __decorateElement(_init, 1, "createSensor", _createSensor_dec, src_default);
 __decorateElement(_init, 1, "updateSensorCondition", _updateSensorCondition_dec, src_default);
 __decoratorMetadata(_init, src_default);

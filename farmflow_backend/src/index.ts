@@ -306,36 +306,36 @@ export default class {
     return greenhouseToUpdate;
   }
   // ** add sensor to greenhouse ** //
-  @update([IDL.Nat, IDL.Nat, IDL.Text, IDL.Text, IDL.Text], Sensor.idlFactory)
-  addSensor(
-    greenHouseId: number,
-    sensorId: number,
-    sensorName: string,
-    typeOfSensor: string,
-    conditionOfSensor: string
-  ): Sensor {
-    if (!this.getGreenHouseById(greenHouseId)) {
-      throw new Error("Greenhouse not found");
-    }
-    if (
-      this.greenHouseIdToSensors[greenHouseId].find(
-        (sensor) => sensor.name === sensorName
-      )
-    ) {
-      throw new Error("Sensor already exists");
-    }
-    let createdSensor;
-    createdSensor = new Sensor(
-      sensorId,
-      sensorName,
-      typeOfSensor,
-      greenHouseId.toString(),
-      conditionOfSensor
-    );
-    this.greenHouseIdToSensors[greenHouseId].push(createdSensor);
-    this.sensors.push(createdSensor);
-    return createdSensor;
-  }
+  // @update([IDL.Nat, IDL.Nat, IDL.Text, IDL.Text, IDL.Text], Sensor.idlFactory)
+  // addSensor(
+  //   greenHouseId: number,
+  //   sensorId: number,
+  //   sensorName: string,
+  //   typeOfSensor: string,
+  //   conditionOfSensor: string
+  // ): Sensor {
+  //   if (!this.getGreenHouseById(greenHouseId)) {
+  //     throw new Error("Greenhouse not found");
+  //   }
+  //   if (
+  //     this.greenHouseIdToSensors[greenHouseId].find(
+  //       (sensor) => sensor.name === sensorName
+  //     )
+  //   ) {
+  //     throw new Error("Sensor already exists");
+  //   }
+  //   let createdSensor;
+  //   createdSensor = new Sensor(
+  //     sensorId,
+  //     sensorName,
+  //     typeOfSensor,
+  //     greenHouseId.toString(),
+  //     conditionOfSensor
+  //   );
+  //   this.greenHouseIdToSensors[greenHouseId].push(createdSensor);
+  //   this.sensors.push(createdSensor);
+  //   return createdSensor;
+  // }
 
   // ** SENSOR FUNCTIONS ** //
   // ** create sensor ** //
@@ -348,24 +348,22 @@ export default class {
     greenhouseId: string,
     condition: string
   ): void {
-    // Check if the farmer ID and greenhouse ID are valid
-    const farmer = this.getFarmerById(farmerID);
     const greenhouse = this.getGreenHouseById(parseInt(greenhouseId));
-    if (!farmer) {
-      throw new Error("Farmer not found");
-    }
     if (!greenhouse) {
       throw new Error("Greenhouse not found");
     }
 
-    // Create sensor
     const newSensor = new Sensor(
       id,
       name,
       typeOfSensor,
       greenhouseId,
-      condition
+      condition,
+      []
     );
+
+    // Update greenhouse sensors
+    greenhouse.sensors.push(newSensor);
 
     // Update mappings
     if (!this.farmerIdToSensors[farmerID]) {
@@ -379,29 +377,8 @@ export default class {
     this.greenHouseIdToSensors[parseInt(greenhouseId)].push(newSensor);
 
     this.sensors.push(newSensor);
-
-    // Update the greenhouse's sensors array
-    greenhouse.sensors.push(newSensor);
-    if (this.getFarmerById(farmerID)) {
-      //check if the farmer has created this sensor before form the farmerIdToSensors mapping
-      if (this.farmerIdToSensors[farmerID]) {
-        if (
-          this.farmerIdToSensors[farmerID].find(
-            (sensor) => sensor.name === name
-          )
-        ) {
-          throw new Error("Sensor already exists");
-        } else {
-          this.farmerIdToSensors[farmerID].push(
-            new Sensor(id, name, typeOfSensor, greenhouseId, condition)
-          );
-          this.sensors.push(
-            new Sensor(id, name, typeOfSensor, greenhouseId, condition)
-          );
-        }
-      }
-    }
   }
+
   // ** update sensor condition ** //
   @update([IDL.Text, IDL.Nat, IDL.Text], Sensor.idlFactory)
   updateSensorCondition(

@@ -1,18 +1,5 @@
 export const idlFactory = ({ IDL }) => {
   return IDL.Service({
-    'addSensor' : IDL.Func(
-        [IDL.Nat, IDL.Nat, IDL.Text, IDL.Text, IDL.Text],
-        [
-          IDL.Record({
-            'id' : IDL.Nat,
-            'name' : IDL.Text,
-            'greenhouseId' : IDL.Text,
-            'typeOfSensor' : IDL.Text,
-            'condition' : IDL.Text,
-          }),
-        ],
-        [],
-      ),
     'createFarmer' : IDL.Func(
         [
           IDL.Text,
@@ -31,6 +18,9 @@ export const idlFactory = ({ IDL }) => {
               'sensors' : IDL.Vec(
                 IDL.Record({
                   'id' : IDL.Nat,
+                  'data' : IDL.Vec(
+                    IDL.Record({ 'data' : IDL.Nat, 'timestamp' : IDL.Text })
+                  ),
                   'name' : IDL.Text,
                   'greenhouseId' : IDL.Text,
                   'typeOfSensor' : IDL.Text,
@@ -53,6 +43,9 @@ export const idlFactory = ({ IDL }) => {
           IDL.Vec(
             IDL.Record({
               'id' : IDL.Nat,
+              'data' : IDL.Vec(
+                IDL.Record({ 'data' : IDL.Nat, 'timestamp' : IDL.Text })
+              ),
               'name' : IDL.Text,
               'greenhouseId' : IDL.Text,
               'typeOfSensor' : IDL.Text,
@@ -90,6 +83,9 @@ export const idlFactory = ({ IDL }) => {
                   'sensors' : IDL.Vec(
                     IDL.Record({
                       'id' : IDL.Nat,
+                      'data' : IDL.Vec(
+                        IDL.Record({ 'data' : IDL.Nat, 'timestamp' : IDL.Text })
+                      ),
                       'name' : IDL.Text,
                       'greenhouseId' : IDL.Text,
                       'typeOfSensor' : IDL.Text,
@@ -116,6 +112,9 @@ export const idlFactory = ({ IDL }) => {
               'sensors' : IDL.Vec(
                 IDL.Record({
                   'id' : IDL.Nat,
+                  'data' : IDL.Vec(
+                    IDL.Record({ 'data' : IDL.Nat, 'timestamp' : IDL.Text })
+                  ),
                   'name' : IDL.Text,
                   'greenhouseId' : IDL.Text,
                   'typeOfSensor' : IDL.Text,
@@ -148,6 +147,9 @@ export const idlFactory = ({ IDL }) => {
                 'sensors' : IDL.Vec(
                   IDL.Record({
                     'id' : IDL.Nat,
+                    'data' : IDL.Vec(
+                      IDL.Record({ 'data' : IDL.Nat, 'timestamp' : IDL.Text })
+                    ),
                     'name' : IDL.Text,
                     'greenhouseId' : IDL.Text,
                     'typeOfSensor' : IDL.Text,
@@ -173,6 +175,9 @@ export const idlFactory = ({ IDL }) => {
             'sensors' : IDL.Vec(
               IDL.Record({
                 'id' : IDL.Nat,
+                'data' : IDL.Vec(
+                  IDL.Record({ 'data' : IDL.Nat, 'timestamp' : IDL.Text })
+                ),
                 'name' : IDL.Text,
                 'greenhouseId' : IDL.Text,
                 'typeOfSensor' : IDL.Text,
@@ -205,6 +210,9 @@ export const idlFactory = ({ IDL }) => {
                 'sensors' : IDL.Vec(
                   IDL.Record({
                     'id' : IDL.Nat,
+                    'data' : IDL.Vec(
+                      IDL.Record({ 'data' : IDL.Nat, 'timestamp' : IDL.Text })
+                    ),
                     'name' : IDL.Text,
                     'greenhouseId' : IDL.Text,
                     'typeOfSensor' : IDL.Text,
@@ -229,6 +237,9 @@ export const idlFactory = ({ IDL }) => {
             'sensors' : IDL.Vec(
               IDL.Record({
                 'id' : IDL.Nat,
+                'data' : IDL.Vec(
+                  IDL.Record({ 'data' : IDL.Nat, 'timestamp' : IDL.Text })
+                ),
                 'name' : IDL.Text,
                 'greenhouseId' : IDL.Text,
                 'typeOfSensor' : IDL.Text,
@@ -245,6 +256,9 @@ export const idlFactory = ({ IDL }) => {
         [
           IDL.Record({
             'id' : IDL.Nat,
+            'data' : IDL.Vec(
+              IDL.Record({ 'data' : IDL.Nat, 'timestamp' : IDL.Text })
+            ),
             'name' : IDL.Text,
             'greenhouseId' : IDL.Text,
             'typeOfSensor' : IDL.Text,

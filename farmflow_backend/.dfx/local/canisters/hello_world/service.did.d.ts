@@ -3,16 +3,6 @@ import type { ActorMethod } from '@dfinity/agent';
 import type { IDL } from '@dfinity/candid';
 
 export interface _SERVICE {
-  'addSensor' : ActorMethod<
-    [bigint, bigint, string, string, string],
-    {
-      'id' : bigint,
-      'name' : string,
-      'greenhouseId' : string,
-      'typeOfSensor' : string,
-      'condition' : string,
-    }
-  >,
   'createFarmer' : ActorMethod<
     [
       string,
@@ -31,6 +21,7 @@ export interface _SERVICE {
           'sensors' : Array<
             {
               'id' : bigint,
+              'data' : Array<{ 'data' : bigint, 'timestamp' : string }>,
               'name' : string,
               'greenhouseId' : string,
               'typeOfSensor' : string,
@@ -52,6 +43,7 @@ export interface _SERVICE {
       Array<
         {
           'id' : bigint,
+          'data' : Array<{ 'data' : bigint, 'timestamp' : string }>,
           'name' : string,
           'greenhouseId' : string,
           'typeOfSensor' : string,
@@ -86,6 +78,7 @@ export interface _SERVICE {
             'sensors' : Array<
               {
                 'id' : bigint,
+                'data' : Array<{ 'data' : bigint, 'timestamp' : string }>,
                 'name' : string,
                 'greenhouseId' : string,
                 'typeOfSensor' : string,
@@ -109,6 +102,7 @@ export interface _SERVICE {
         'sensors' : Array<
           {
             'id' : bigint,
+            'data' : Array<{ 'data' : bigint, 'timestamp' : string }>,
             'name' : string,
             'greenhouseId' : string,
             'typeOfSensor' : string,
@@ -138,6 +132,7 @@ export interface _SERVICE {
           'sensors' : Array<
             {
               'id' : bigint,
+              'data' : Array<{ 'data' : bigint, 'timestamp' : string }>,
               'name' : string,
               'greenhouseId' : string,
               'typeOfSensor' : string,
@@ -160,6 +155,7 @@ export interface _SERVICE {
       'sensors' : Array<
         {
           'id' : bigint,
+          'data' : Array<{ 'data' : bigint, 'timestamp' : string }>,
           'name' : string,
           'greenhouseId' : string,
           'typeOfSensor' : string,
@@ -189,6 +185,7 @@ export interface _SERVICE {
           'sensors' : Array<
             {
               'id' : bigint,
+              'data' : Array<{ 'data' : bigint, 'timestamp' : string }>,
               'name' : string,
               'greenhouseId' : string,
               'typeOfSensor' : string,
@@ -210,6 +207,7 @@ export interface _SERVICE {
       'sensors' : Array<
         {
           'id' : bigint,
+          'data' : Array<{ 'data' : bigint, 'timestamp' : string }>,
           'name' : string,
           'greenhouseId' : string,
           'typeOfSensor' : string,
@@ -223,6 +221,7 @@ export interface _SERVICE {
     [string, bigint, string],
     {
       'id' : bigint,
+      'data' : Array<{ 'data' : bigint, 'timestamp' : string }>,
       'name' : string,
       'greenhouseId' : string,
       'typeOfSensor' : string,
