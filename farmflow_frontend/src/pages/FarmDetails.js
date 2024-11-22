@@ -5,6 +5,7 @@ import farmImage from "../utils/images";
 import SensorDashboard from "./SensorDashboard";
 import { authSubscribe, signOut } from "@junobuild/core";
 import generateRandomNumber from "../utils/random";
+import toast from "react-hot-toast";
 
 function FarmDetails() {
   const { id } = useParams();
@@ -83,6 +84,10 @@ function FarmDetails() {
           sensorDetails.condition,
           []
         );
+        document.getElementById("my_modal_1").close();
+        toast.success("Sensor added successfully", {
+          className: "z-50",
+        });
         setLoading(false);
       } catch (error) {
         setLoading(false);
@@ -136,10 +141,10 @@ function FarmDetails() {
                     required
                   >
                     <option value="">Select sensor type:</option>
-                    <option value="Farmer">Temperature</option>
-                    <option value="Consumer">Humidity</option>
-                    <option value="Consumer">Soil Moisture</option>
-                    <option value="Consumer">Soil pH</option>
+                    <option value="Temperature">Temperature</option>
+                    <option value="Humidity">Humidity</option>
+                    <option value="Soil Moisture">Soil Moisture</option>
+                    <option value="Soil pH">Soil pH</option>
                   </select>
                 </div>
                 <div className="mb-6">
@@ -156,8 +161,8 @@ function FarmDetails() {
                     required
                   >
                     <option value="">Select sensor condition</option>
-                    <option value="Farmer">Good</option>
-                    <option value="Consumer">Average</option>
+                    <option value="Good">Good</option>
+                    <option value="Average">Average</option>
                   </select>
                 </div>
                 <button

@@ -14,6 +14,7 @@ import FarmerForm from "./pages/FarmerForm";
 import ConsumerForm from "./pages/ConsumerForm";
 import { initSatellite } from "@junobuild/core";
 import FarmDetails from "./pages/FarmDetails";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   useEffect(() => {
@@ -50,6 +51,7 @@ function App() {
           </div>
         </footer>
       </div>
+      <Toaster />
     </Router>
   );
 }
