@@ -59,6 +59,13 @@ const SensorDashboard = ({ farmId }) => {
   });
 
   const fetchSensorReadings = async (typeOfSensor) => {
+    const sensorExistsInGreenHouse = await actor.checkIfSensorTypeExists(
+      typeOfSensor,
+      farmId
+    );
+    if (!sensorExistsInGreenHouse) {
+      return;
+    }
     try {
       const response = await actor.getSensorReadings(
         typeOfSensor,

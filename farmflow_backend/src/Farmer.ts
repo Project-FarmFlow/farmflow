@@ -1,5 +1,6 @@
 import { IDL } from "azle";
 import GreenHouse from "./GreenHouse";
+import Notifications from "./Notifications";
 
 class Farmer {
   id: string;
@@ -10,6 +11,7 @@ class Farmer {
   location: string;
   subscription: string;
   greenhouses: GreenHouse[];
+  notifications: Notifications[];
 
   constructor(
     id: string,
@@ -19,7 +21,8 @@ class Farmer {
     phone: string,
     location: string,
     subscription: string,
-    greenhouses: GreenHouse[]
+    greenhouses: GreenHouse[],
+    notifications: Notifications[]
   ) {
     this.id = id;
     this.username = username;
@@ -29,6 +32,7 @@ class Farmer {
     this.location = location;
     this.subscription = subscription;
     this.greenhouses = greenhouses;
+    this.notifications = notifications;
   }
 
   static idlFactory: IDL.RecordClass = IDL.Record({
@@ -40,6 +44,7 @@ class Farmer {
     location: IDL.Text,
     subscription: IDL.Text,
     greenhouses: IDL.Vec(GreenHouse.idlFactory),
+    notifications: IDL.Vec(Notifications.idlFactory),
   });
 }
 

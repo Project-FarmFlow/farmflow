@@ -8,6 +8,7 @@ export default class GreenHouse {
   farmerId: string;
   sensors: Sensor[];
   moistureLevel: number;
+  isPumpOn: boolean;
 
   constructor(
     id: number,
@@ -15,7 +16,8 @@ export default class GreenHouse {
     location: string,
     farmerId: string,
     sensors: Sensor[],
-    moistureLevel: number
+    moistureLevel: number,
+    isPumpOn: boolean
   ) {
     this.id = id;
     this.name = name;
@@ -23,6 +25,7 @@ export default class GreenHouse {
     this.farmerId = farmerId;
     this.sensors = sensors;
     this.moistureLevel = moistureLevel;
+    this.isPumpOn = isPumpOn;
   }
 
   static idlFactory: IDL.RecordClass = IDL.Record({
@@ -32,5 +35,6 @@ export default class GreenHouse {
     farmerId: IDL.Text,
     sensors: IDL.Vec(Sensor.idlFactory),
     moistureLevel: IDL.Float64,
+    isPumpOn: IDL.Bool,
   });
 }

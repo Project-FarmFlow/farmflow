@@ -3,6 +3,7 @@ import Farmer from "./Farmer";
 import GreenHouse from "./GreenHouse";
 import Sensor from "./Sensor";
 import Data from "./Data";
+import Notifications from "./Notifications";
 
 export default class {
   // ** STORAGE & IDENTIFIERS ** //
@@ -53,6 +54,12 @@ export default class {
     if (isAvailable) {
       throw new Error("Farmer already exists");
     } else {
+      const notify = new Notifications(
+        0,
+        "Welcome",
+        "Welcome to FarmFlow",
+        Date.now().toString()
+      );
       this.farmerIdToFarmer[id] = new Farmer(
         id,
         username,
@@ -61,7 +68,8 @@ export default class {
         phone,
         location,
         subscription,
-        greenhouses
+        greenhouses,
+        []
       );
       this.farmers.push(
         new Farmer(
@@ -72,7 +80,8 @@ export default class {
           phone,
           location,
           subscription,
-          greenhouses
+          greenhouses,
+          []
         )
       );
     }
@@ -174,6 +183,16 @@ export default class {
     }
     return farmerToUpdate;
   }
+  // ** push notification ** //
+  @update([IDL.Text, Notifications.idlFactory], IDL.Text)
+  pushNotification(farmerId: string, notification: Notifications): string {
+    const farmer = this.getFarmerById(farmerId);
+    if (!farmer) {
+      return "Farmer not found";
+    }
+    farmer.notifications.push(notification);
+    return "Notification pushed";
+  }
 
   // ** GREENHOUSE FUNCTIONS ** //
   // ** get greenhouse by name ** //
@@ -212,7 +231,8 @@ export default class {
         location,
         farmerId,
         sensors,
-        moistureLevel
+        moistureLevel,
+        false
       );
       this.farmerIdToGreenHouse[farmerId] = new GreenHouse(
         id,
@@ -220,19 +240,36 @@ export default class {
         location,
         farmerId,
         sensors,
-        moistureLevel
+        moistureLevel,
+        false
       );
       //find the farmer in the farmers array
       const farmer = this.getFarmerById(farmerId);
       //update the farmer's greenhouses array
       farmer.greenhouses.push(
-        new GreenHouse(id, name, location, farmerId, sensors, moistureLevel)
+        new GreenHouse(
+          id,
+          name,
+          location,
+          farmerId,
+          sensors,
+          moistureLevel,
+          false
+        )
       );
       //remove old farmer and insert the new one
       this.farmers = this.farmers.filter((farmer) => farmer.id !== farmerId);
       this.farmers.push(farmer);
       this.greenHouses.push(
-        new GreenHouse(id, name, location, farmerId, sensors, moistureLevel)
+        new GreenHouse(
+          id,
+          name,
+          location,
+          farmerId,
+          sensors,
+          moistureLevel,
+          false
+        )
       );
     }
   }
@@ -306,37 +343,17 @@ export default class {
     }
     return greenhouseToUpdate;
   }
-  // ** add sensor to greenhouse ** //
-  // @update([IDL.Nat, IDL.Nat, IDL.Text, IDL.Text, IDL.Text], Sensor.idlFactory)
-  // addSensor(
-  //   greenHouseId: number,
-  //   sensorId: number,
-  //   sensorName: string,
-  //   typeOfSensor: string,
-  //   conditionOfSensor: string
-  // ): Sensor {
-  //   if (!this.getGreenHouseById(greenHouseId)) {
-  //     throw new Error("Greenhouse not found");
-  //   }
-  //   if (
-  //     this.greenHouseIdToSensors[greenHouseId].find(
-  //       (sensor) => sensor.name === sensorName
-  //     )
-  //   ) {
-  //     throw new Error("Sensor already exists");
-  //   }
-  //   let createdSensor;
-  //   createdSensor = new Sensor(
-  //     sensorId,
-  //     sensorName,
-  //     typeOfSensor,
-  //     greenHouseId.toString(),
-  //     conditionOfSensor
-  //   );
-  //   this.greenHouseIdToSensors[greenHouseId].push(createdSensor);
-  //   this.sensors.push(createdSensor);
-  //   return createdSensor;
-  // }
+
+  // ** PUMP FUNCTIONS ** //
+  @query([IDL.Nat], IDL.Bool)
+  getIsPumpOn(greenHouseId: number): boolean {
+    return this.greenHouseIdToGreenHouse[greenHouseId].isPumpOn;
+  }
+  @update([IDL.Nat, IDL.Bool], GreenHouse.idlFactory)
+  updatePumpStatus(greenHouseId: number, isPumpOn: boolean): GreenHouse {
+    this.greenHouseIdToGreenHouse[greenHouseId].isPumpOn = isPumpOn;
+    return this.greenHouseIdToGreenHouse[greenHouseId];
+  }
 
   // ** SENSOR FUNCTIONS ** //
   // ** create sensor ** //
@@ -446,5 +463,92 @@ export default class {
     } else {
       throw new Error("Sensor not found");
     }
+  }
+
+  // ** check if sensor type exists in a greenHouse ** //
+  @query([IDL.Text, IDL.Nat], IDL.Bool)
+  checkIfSensorTypeExists(sensorType: string, greenHouseId: number): boolean {
+    const allSensors = this.greenHouseIdToGreenHouse[greenHouseId].sensors;
+    const sensor = allSensors.find(
+      (sensor) => sensor.typeOfSensor === sensorType
+    );
+    if (sensor) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  // ** AUTOMATONS ** //
+  @update([IDL.Nat, IDL.Text], IDL.Text)
+  checkSoilMoistureLevel(greenHouseId: number, farmerId: string): string {
+    const greenHouse = this.getGreenHouseById(greenHouseId);
+    if (!greenHouse) {
+      return "GreenHouse not found";
+    }
+    //check if greenhouse has moisture sensor
+    const sensor = greenHouse.sensors.find(
+      (sensor) => sensor.typeOfSensor === "Soil Moisture"
+    );
+    if (!sensor) {
+      return "No Soil Moisture sensor found";
+    }
+    //check if moisture sensor has any data
+    if (sensor.data.length === 0) {
+      return "No data for Soil Moisture sensor";
+    }
+
+    //check if moisture level is below 30%
+    const moistureLevel = sensor.data[sensor.data.length - 1].data;
+    if (moistureLevel < 30) {
+      const notify = new Notifications(
+        Number(this.generateRandomId()),
+        "Soil Moisture Alert",
+        "Soil moisture level has dropped below the optimal threshold. Irrigation has been triggered.",
+        Date.now().toString()
+      );
+      const notify2 = new Notifications(
+        Number(this.generateRandomId()),
+        "Pump Status Change",
+        "The water pump has been turned ON. Please ensure adequate water supply to the system.",
+        Date.now().toString()
+      );
+      const notify3 = new Notifications(
+        Number(this.generateRandomId()),
+        "Irrigation Status",
+        "The irrigation system has been automatically activated. Optimal soil moisture levels will be restored soon.",
+        Date.now().toString()
+      );
+      this.farmerIdToFarmer[farmerId].notifications.push(notify);
+      this.farmerIdToFarmer[farmerId].notifications.push(notify2);
+      this.farmerIdToFarmer[farmerId].notifications.push(notify3);
+      this.updatePumpStatus(greenHouseId, true);
+      return "Moisture level is below 30%. Pump turned on";
+    } else {
+      const notify = new Notifications(
+        Number(this.generateRandomId()),
+        "Soil Moisture Alert",
+        "Soil moisture level is now the optimal threshold. Irrigation has been stopped.",
+        Date.now().toString()
+      );
+      const notify2 = new Notifications(
+        Number(this.generateRandomId()),
+        "Pump Status Change",
+        "The water pump has been turned OFF. You can now safely turn off the water system.",
+        Date.now().toString()
+      );
+      this.farmerIdToFarmer[farmerId].notifications.push(notify);
+      this.farmerIdToFarmer[farmerId].notifications.push(notify2);
+      this.updatePumpStatus(greenHouseId, false);
+      return "Moisture level is above 30%. Pump turned off";
+    }
+  }
+
+  // ** UTILITIES **//
+  // ** generate random ids **//
+  generateRandomId(): string {
+    return (
+      Math.floor(Math.random() * 100).toString() + `${Date.now()}`
+    ).substring(0, 4);
   }
 }

@@ -16,6 +16,15 @@ const DataIDLFactory = (IDL) => {
   });
 };
 
+const NotificationsIDLFactory = (IDL) => {
+  return IDL.Record({
+    id: IDL.Nat,
+    title: IDL.Text,
+    message: IDL.Text,
+    timestamp: IDL.Text,
+  });
+};
+
 const SensorIDLFactory = (IDL) => {
   return IDL.Record({
     id: IDL.Nat,
@@ -105,6 +114,7 @@ const actor = Actor.createActor(
         [DataIDLFactory(IDL)],
         []
       ),
+      checkIfSensorTypeExists: IDL.Func([IDL.Text, IDL.Nat], [IDL.Bool], []),
     });
   },
   { agent, canisterId }
