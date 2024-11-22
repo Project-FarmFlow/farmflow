@@ -448,7 +448,11 @@ export default class {
       (sensor) => sensor.typeOfSensor === sensorType
     );
     if (sensor) {
-      return sensor.data;
+      if (sensor.data.length === 0) {
+        return [];
+      } else {
+        return sensor.data;
+      }
     } else {
       throw new Error("Sensor not found");
     }

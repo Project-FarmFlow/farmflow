@@ -5498,7 +5498,11 @@ var src_default = class {
       (sensor2) => sensor2.typeOfSensor === sensorType
     );
     if (sensor) {
-      return sensor.data;
+      if (sensor.data.length === 0) {
+        return [];
+      } else {
+        return sensor.data;
+      }
     } else {
       throw new Error("Sensor not found");
     }

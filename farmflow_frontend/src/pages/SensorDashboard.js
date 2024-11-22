@@ -94,33 +94,71 @@ const SensorDashboard = ({ farmId }) => {
     }
   };
 
-  console.log(temperature);
+  const fetchHistoricalSensorData = async (typeOfSensor) => {
+    const sensorExistsInGreenHouse = await actor.checkIfSensorTypeExists(
+      typeOfSensor,
+      Number(farmId)
+    );
+    if (!sensorExistsInGreenHouse) {
+      return;
+    }
+    try {
+      const response = await actor.getHistoricalData(
+        typeOfSensor,
+        Number(farmId)
+      );
+      if (response) {
+        switch (typeOfSensor.toLowerCase()) {
+          case "temperature":
+            setHistoricalData({
+              ...historicalData,
+              temperature: response,
+            });
+            break;
+          case "humidity":
+            setHistoricalData({
+              ...historicalData,
+              humidity: response,
+            });
+            break;
+          case "soil moisture":
+            setHistoricalData({
+              ...historicalData,
+              soilMoisture: response,
+            });
+            break;
+          case "soil ph":
+            setHistoricalData({
+              ...historicalData,
+              soilPH: response,
+            });
+            break;
+          default:
+            break;
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   // Simulate fetching sensor readings and historical data (replace with API call in real-world use)
   useEffect(() => {
-    const fetchSensorData = () => {
-      // Simulate sensor readings
-      setSensorReadings({
-        temperature: Math.random() * 30 + 15, // Random temperature between 15 and 45 °C
-        humidity: Math.random() * 50 + 30, // Random humidity between 30% and 80%
-        soilMoisture: Math.random() * 50 + 10, // Random soil moisture between 10% and 60%
-        soilPH: Math.random() * 2 + 5, // Random pH between 5 and 7
-      });
-
-      // Simulate historical data (replace with actual historical data)
-      setHistoricalData({
-        temperature: [...historicalData.temperature, Math.random() * 30 + 15],
-        humidity: [...historicalData.humidity, Math.random() * 50 + 30],
-        soilMoisture: [...historicalData.soilMoisture, Math.random() * 50 + 10],
-        soilPH: [...historicalData.soilPH, Math.random() * 2 + 5],
-      });
-    };
-
     fetchSensorReadings("Temperature");
+    fetchSensorReadings("Humidity");
+    fetchSensorReadings("Soil Moisture");
+    fetchSensorReadings("Soil pH");
 
-    const interval = setInterval(fetchSensorData, 5000); // Fetch data every 5 seconds
-    return () => clearInterval(interval); // Cleanup on component unmount
-  }, [historicalData]);
+    fetchHistoricalSensorData("Temperature");
+    fetchHistoricalSensorData("Humidity");
+    fetchHistoricalSensorData("Soil Moisture");
+    fetchHistoricalSensorData("Soil pH");
+  }, []);
+
+  console.log(temperature);
+  console.log(humidity);
+  console.log(soilMoisture);
+  console.log(soilPH);
 
   // Handle turning the pump on/off
   const togglePump = () => {
@@ -146,32 +184,32 @@ const SensorDashboard = ({ farmId }) => {
 
   return (
     <div className="container mx-auto py-6 px-4">
-      <h1 className="text-3xl font-semibold text-center mb-6">
+      <h1 className="text-3xl text-black font-semibold text-center mb-6">
         Sensor Dashboard
       </h1>
 
       {/* Sensor Readings */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6 text-black">
         <div className="bg-white p-4 rounded-lg shadow-md">
           <h3 className="text-xl font-semibold mb-2">Temperature</h3>
-          <p className="text-2xl">{sensorReadings.temperature.toFixed(2)} °C</p>
+          <p className="text-2xl">{Number(temperature.data)} °C</p>
         </div>
         <div className="bg-white p-4 rounded-lg shadow-md">
           <h3 className="text-xl font-semibold mb-2">Humidity</h3>
-          <p className="text-2xl">{sensorReadings.humidity.toFixed(2)} %</p>
+          <p className="text-2xl">{Number(humidity.data)} %</p>
         </div>
         <div className="bg-white p-4 rounded-lg shadow-md">
           <h3 className="text-xl font-semibold mb-2">Soil Moisture</h3>
-          <p className="text-2xl">{sensorReadings.soilMoisture.toFixed(2)} %</p>
+          <p className="text-2xl">{Number(soilMoisture.data)} %</p>
         </div>
         <div className="bg-white p-4 rounded-lg shadow-md">
           <h3 className="text-xl font-semibold mb-2">Soil pH</h3>
-          <p className="text-2xl">{sensorReadings.soilPH.toFixed(2)}</p>
+          <p className="text-2xl">{Number(soilPH.data)}</p>
         </div>
       </div>
 
       {/* Historical Data - Graphs */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 text-black">
         <div className="bg-white p-4 rounded-lg shadow-md">
           <h3 className="text-xl font-semibold mb-2">Temperature History</h3>
           <Line
