@@ -9,6 +9,13 @@ if (process.env.NODE_ENV === "development") {
   agent.fetchRootKey();
 }
 
+const DataIDLFactory = (IDL) => {
+  return IDL.Record({
+    data: IDL.Nat,
+    timestamp: IDL.Text,
+  });
+};
+
 const SensorIDLFactory = (IDL) => {
   return IDL.Record({
     id: IDL.Nat,
@@ -16,6 +23,7 @@ const SensorIDLFactory = (IDL) => {
     typeOfSensor: IDL.Text,
     greenhouseId: IDL.Text,
     condition: IDL.Text,
+    data: IDL.Vec(DataIDLFactory(IDL)),
   });
 };
 
@@ -73,12 +81,30 @@ const actor = Actor.createActor(
         []
       ),
       createSensor: IDL.Func(
-        [IDL.Text, IDL.Nat, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+        [
+          IDL.Text,
+          IDL.Nat,
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Vec(DataIDLFactory(IDL)),
+        ],
         [],
         []
       ),
       getFarmerById: IDL.Func([IDL.Text], [FarmerIDLFactory(IDL)], []),
       getGreenHouseById: IDL.Func([IDL.Nat], [GreenHouseIDLFactory(IDL)], []),
+      getHistoricalData: IDL.Func(
+        [IDL.Text, IDL.Nat],
+        [IDL.Vec(DataIDLFactory(IDL))],
+        []
+      ),
+      getSensorReadings: IDL.Func(
+        [IDL.Text, IDL.Nat],
+        [DataIDLFactory(IDL)],
+        []
+      ),
     });
   },
   { agent, canisterId }

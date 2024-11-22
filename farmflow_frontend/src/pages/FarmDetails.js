@@ -32,7 +32,7 @@ function FarmDetails() {
   if (loading) {
     return <LoadingOverlay />;
   }
-  if (farm === null) {
+  if (farm === null || id === undefined) {
     return (
       <div className="h-screen bg-gray-50">
         <div>
@@ -80,7 +80,8 @@ function FarmDetails() {
           sensorDetails.name,
           sensorDetails.type,
           id,
-          sensorDetails.condition
+          sensorDetails.condition,
+          []
         );
         setLoading(false);
       } catch (error) {
@@ -191,7 +192,7 @@ function FarmDetails() {
         <p className="text-lg my-4 text-gray-500 ">
           {farm.sensors.length} active sensors
         </p>
-        {farm.sensors.length > 0 ? <SensorDashboard /> : null}
+        {farm.sensors.length > 0 ? <SensorDashboard farmId={id} /> : null}
         <button
           className="btn bg-green-500 text-white border-none"
           onClick={() => document.getElementById("my_modal_1").showModal()}
