@@ -98,15 +98,15 @@ const NotificationsPage = () => {
               <div className="flex justify-between items-center mb-2">
                 <div className="flex items-center">
                   <MdAlarm />
-                  <h3 className="text-xl font-semibold text-gray-800 ml-3">
+                  <h3 className="text-base md:text-xl font-semibold text-gray-800 ml-3">
                     {notification.title}
                   </h3>
                 </div>
                 <span className="text-sm text-gray-500">
-                  {new Date(notification.timestamp).toLocaleString()}
+                  {format(new Date(Number(notification.timestamp)), "PPp")}
                 </span>
               </div>
-              <p className="text-lg text-gray-700">{notification.message}</p>
+              <p className="text-sm text-gray-700">{notification.message}</p>
               {/* <button
                 onClick={() => handleMarkAsRead(notification.id)}
                 className="mt-4 text-sm text-green-600 hover:text-green-800 transition duration-300"
