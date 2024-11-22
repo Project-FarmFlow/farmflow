@@ -115,7 +115,7 @@ const Dashboard = () => {
     <div className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex flex-col items-center justify-center z-50">
       <h1 className="text-white ml-4 text-lg">Not logged in.</h1>
       <button
-        className="bg-green-500 rounded-md font-bold text-lg py-2 px-8"
+        className="bg-green-500 rounded-md font-bold text-lg py-2 px-8 text-white"
         onClick={() => navigate("/")}
       >
         Home

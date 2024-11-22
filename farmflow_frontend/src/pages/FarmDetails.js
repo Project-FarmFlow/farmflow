@@ -90,11 +90,11 @@ function FarmDetails() {
     };
 
     return (
-      <dialog id="my_modal_1" className="modal">
+      <dialog id="my_modal_1" className="modal backdrop-blur-sm">
         {loading ? (
           <span className="loading loading-dots loading-lg bg-green-500"></span>
         ) : (
-          <div className="modal-box">
+          <div className="modal-box bg-white">
             <h3 className="font-bold text-lg">Add Sensor</h3>
             <p className="py-4">
               Press ESC key or click the button below to close
@@ -182,12 +182,18 @@ function FarmDetails() {
           alt="farm"
           className="w-full md:h-[38rem] h-96 object-cover rounded-md"
         />
-        <p className="text-black my-4">Farm Name: {farm.name}</p>
-        <p className="text-black my-4">Farm Location: {farm.location}</p>
-        <p className="text-black my-4">Sensors: {farm.sensors.length}</p>
+        <p className="text-black my-4 font-bold text-3xl">
+          {farm.name} GreenHouse
+        </p>
+        <p className="text-black my-4 font-semibold text-2xl">
+          {farm.location}
+        </p>
+        <p className="text-lg my-4 text-gray-500 ">
+          {farm.sensors.length} active sensors
+        </p>
         {farm.sensors.length > 0 ? <SensorDashboard /> : null}
         <button
-          className="btn"
+          className="btn bg-green-500 text-white border-none"
           onClick={() => document.getElementById("my_modal_1").showModal()}
         >
           Add Sensor
