@@ -37,6 +37,7 @@ const UserDetailsPage = () => {
         userDetails.phoneNumber,
         userDetails.location,
         "basic",
+        [],
         []
       );
       if (role === "Farmer") {

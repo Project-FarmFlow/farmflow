@@ -1,5 +1,12 @@
 export const idlFactory = ({ IDL }) => {
   return IDL.Service({
+    'checkIfFarmerIsRegistered' : IDL.Func([IDL.Text], [IDL.Bool], ['query']),
+    'checkIfSensorTypeExists' : IDL.Func(
+        [IDL.Text, IDL.Nat],
+        [IDL.Bool],
+        ['query'],
+      ),
+    'checkSoilMoistureLevel' : IDL.Func([IDL.Nat, IDL.Text], [IDL.Text], []),
     'createFarmer' : IDL.Func(
         [
           IDL.Text,
@@ -27,6 +34,7 @@ export const idlFactory = ({ IDL }) => {
                   'condition' : IDL.Text,
                 })
               ),
+              'isPumpOn' : IDL.Bool,
               'location' : IDL.Text,
             })
           ),
@@ -69,6 +77,14 @@ export const idlFactory = ({ IDL }) => {
             IDL.Record({
               'id' : IDL.Text,
               'username' : IDL.Text,
+              'notifications' : IDL.Vec(
+                IDL.Record({
+                  'id' : IDL.Nat,
+                  'title' : IDL.Text,
+                  'message' : IDL.Text,
+                  'timestamp' : IDL.Text,
+                })
+              ),
               'subscription' : IDL.Text,
               'password' : IDL.Text,
               'email' : IDL.Text,
@@ -92,6 +108,7 @@ export const idlFactory = ({ IDL }) => {
                       'condition' : IDL.Text,
                     })
                   ),
+                  'isPumpOn' : IDL.Bool,
                   'location' : IDL.Text,
                 })
               ),
@@ -121,6 +138,7 @@ export const idlFactory = ({ IDL }) => {
                   'condition' : IDL.Text,
                 })
               ),
+              'isPumpOn' : IDL.Bool,
               'location' : IDL.Text,
             })
           ),
@@ -133,6 +151,14 @@ export const idlFactory = ({ IDL }) => {
           IDL.Record({
             'id' : IDL.Text,
             'username' : IDL.Text,
+            'notifications' : IDL.Vec(
+              IDL.Record({
+                'id' : IDL.Nat,
+                'title' : IDL.Text,
+                'message' : IDL.Text,
+                'timestamp' : IDL.Text,
+              })
+            ),
             'subscription' : IDL.Text,
             'password' : IDL.Text,
             'email' : IDL.Text,
@@ -156,6 +182,7 @@ export const idlFactory = ({ IDL }) => {
                     'condition' : IDL.Text,
                   })
                 ),
+                'isPumpOn' : IDL.Bool,
                 'location' : IDL.Text,
               })
             ),
@@ -184,6 +211,7 @@ export const idlFactory = ({ IDL }) => {
                 'condition' : IDL.Text,
               })
             ),
+            'isPumpOn' : IDL.Bool,
             'location' : IDL.Text,
           }),
         ],
@@ -195,10 +223,24 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(IDL.Record({ 'data' : IDL.Nat, 'timestamp' : IDL.Text }))],
         ['query'],
       ),
+    'getIsPumpOn' : IDL.Func([IDL.Nat], [IDL.Bool], ['query']),
     'getSensorReadings' : IDL.Func(
         [IDL.Text, IDL.Nat],
         [IDL.Record({ 'data' : IDL.Nat, 'timestamp' : IDL.Text })],
         ['query'],
+      ),
+    'pushNotification' : IDL.Func(
+        [
+          IDL.Text,
+          IDL.Record({
+            'id' : IDL.Nat,
+            'title' : IDL.Text,
+            'message' : IDL.Text,
+            'timestamp' : IDL.Text,
+          }),
+        ],
+        [IDL.Text],
+        [],
       ),
     'updateFarmerDetails' : IDL.Func(
         [IDL.Text, IDL.Text, IDL.Text],
@@ -206,6 +248,14 @@ export const idlFactory = ({ IDL }) => {
           IDL.Record({
             'id' : IDL.Text,
             'username' : IDL.Text,
+            'notifications' : IDL.Vec(
+              IDL.Record({
+                'id' : IDL.Nat,
+                'title' : IDL.Text,
+                'message' : IDL.Text,
+                'timestamp' : IDL.Text,
+              })
+            ),
             'subscription' : IDL.Text,
             'password' : IDL.Text,
             'email' : IDL.Text,
@@ -229,6 +279,7 @@ export const idlFactory = ({ IDL }) => {
                     'condition' : IDL.Text,
                   })
                 ),
+                'isPumpOn' : IDL.Bool,
                 'location' : IDL.Text,
               })
             ),
@@ -256,6 +307,33 @@ export const idlFactory = ({ IDL }) => {
                 'condition' : IDL.Text,
               })
             ),
+            'isPumpOn' : IDL.Bool,
+            'location' : IDL.Text,
+          }),
+        ],
+        [],
+      ),
+    'updatePumpStatus' : IDL.Func(
+        [IDL.Nat, IDL.Bool],
+        [
+          IDL.Record({
+            'id' : IDL.Nat,
+            'moistureLevel' : IDL.Float64,
+            'farmerId' : IDL.Text,
+            'name' : IDL.Text,
+            'sensors' : IDL.Vec(
+              IDL.Record({
+                'id' : IDL.Nat,
+                'data' : IDL.Vec(
+                  IDL.Record({ 'data' : IDL.Nat, 'timestamp' : IDL.Text })
+                ),
+                'name' : IDL.Text,
+                'greenhouseId' : IDL.Text,
+                'typeOfSensor' : IDL.Text,
+                'condition' : IDL.Text,
+              })
+            ),
+            'isPumpOn' : IDL.Bool,
             'location' : IDL.Text,
           }),
         ],

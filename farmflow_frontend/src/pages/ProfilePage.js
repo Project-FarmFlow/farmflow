@@ -75,6 +75,8 @@ const Profile = () => {
     );
   }
 
+  console.log(farmer);
+
   return (
     <div className="bg-gray-100 min-h-screen py-6">
       <div className="container mx-auto bg-white p-6 rounded-lg shadow-md">

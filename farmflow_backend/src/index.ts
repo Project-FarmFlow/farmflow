@@ -48,7 +48,8 @@ export default class {
     phone: string,
     location: string,
     subscription: string,
-    greenhouses: GreenHouse[]
+    greenhouses: GreenHouse[],
+    notifications: Notifications[]
   ): void {
     const isAvailable = this.getFarmerByName(username);
     if (isAvailable) {
@@ -60,7 +61,7 @@ export default class {
         "Welcome to FarmFlow",
         Date.now().toString()
       );
-      this.farmerIdToFarmer[id] = new Farmer(
+      const farmer = new Farmer(
         id,
         username,
         password,
@@ -69,21 +70,10 @@ export default class {
         location,
         subscription,
         greenhouses,
-        []
+        [notify]
       );
-      this.farmers.push(
-        new Farmer(
-          id,
-          username,
-          password,
-          email,
-          phone,
-          location,
-          subscription,
-          greenhouses,
-          []
-        )
-      );
+      this.farmerIdToFarmer[id] = farmer;
+      this.farmers.push(farmer);
     }
   }
   // ** get all farmers ** //
@@ -193,6 +183,16 @@ export default class {
     farmer.notifications.push(notification);
     return "Notification pushed";
   }
+  // ** check if farmer is registered ** //
+  @query([IDL.Text], IDL.Bool)
+  checkIfFarmerIsRegistered(farmerId: string): boolean {
+    const farmer = this.farmerIdToFarmer[farmerId];
+    if (farmer) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   // ** GREENHOUSE FUNCTIONS ** //
   // ** get greenhouse by name ** //
@@ -257,6 +257,13 @@ export default class {
           false
         )
       );
+      const notify = new Notifications(
+        Number(this.generateRandomId()),
+        "GreenHouse Created",
+        `${name} has been created successfully. Check it out now.`,
+        Date.now().toString()
+      );
+      farmer.notifications.push(notify);
       //remove old farmer and insert the new one
       this.farmers = this.farmers.filter((farmer) => farmer.id !== farmerId);
       this.farmers.push(farmer);

@@ -3,6 +3,9 @@ import type { ActorMethod } from '@dfinity/agent';
 import type { IDL } from '@dfinity/candid';
 
 export interface _SERVICE {
+  'checkIfFarmerIsRegistered' : ActorMethod<[string], boolean>,
+  'checkIfSensorTypeExists' : ActorMethod<[string, bigint], boolean>,
+  'checkSoilMoistureLevel' : ActorMethod<[bigint, string], string>,
   'createFarmer' : ActorMethod<
     [
       string,
@@ -28,6 +31,7 @@ export interface _SERVICE {
               'condition' : string,
             }
           >,
+          'isPumpOn' : boolean,
           'location' : string,
         }
       >,
@@ -64,6 +68,14 @@ export interface _SERVICE {
       {
         'id' : string,
         'username' : string,
+        'notifications' : Array<
+          {
+            'id' : bigint,
+            'title' : string,
+            'message' : string,
+            'timestamp' : string,
+          }
+        >,
         'subscription' : string,
         'password' : string,
         'email' : string,
@@ -85,6 +97,7 @@ export interface _SERVICE {
                 'condition' : string,
               }
             >,
+            'isPumpOn' : boolean,
             'location' : string,
           }
         >,
@@ -109,6 +122,7 @@ export interface _SERVICE {
             'condition' : string,
           }
         >,
+        'isPumpOn' : boolean,
         'location' : string,
       }
     >
@@ -118,6 +132,14 @@ export interface _SERVICE {
     {
       'id' : string,
       'username' : string,
+      'notifications' : Array<
+        {
+          'id' : bigint,
+          'title' : string,
+          'message' : string,
+          'timestamp' : string,
+        }
+      >,
       'subscription' : string,
       'password' : string,
       'email' : string,
@@ -139,6 +161,7 @@ export interface _SERVICE {
               'condition' : string,
             }
           >,
+          'isPumpOn' : boolean,
           'location' : string,
         }
       >,
@@ -162,6 +185,7 @@ export interface _SERVICE {
           'condition' : string,
         }
       >,
+      'isPumpOn' : boolean,
       'location' : string,
     }
   >,
@@ -170,15 +194,36 @@ export interface _SERVICE {
     [string, bigint],
     Array<{ 'data' : bigint, 'timestamp' : string }>
   >,
+  'getIsPumpOn' : ActorMethod<[bigint], boolean>,
   'getSensorReadings' : ActorMethod<
     [string, bigint],
     { 'data' : bigint, 'timestamp' : string }
+  >,
+  'pushNotification' : ActorMethod<
+    [
+      string,
+      {
+        'id' : bigint,
+        'title' : string,
+        'message' : string,
+        'timestamp' : string,
+      },
+    ],
+    string
   >,
   'updateFarmerDetails' : ActorMethod<
     [string, string, string],
     {
       'id' : string,
       'username' : string,
+      'notifications' : Array<
+        {
+          'id' : bigint,
+          'title' : string,
+          'message' : string,
+          'timestamp' : string,
+        }
+      >,
       'subscription' : string,
       'password' : string,
       'email' : string,
@@ -200,6 +245,7 @@ export interface _SERVICE {
               'condition' : string,
             }
           >,
+          'isPumpOn' : boolean,
           'location' : string,
         }
       >,
@@ -222,6 +268,28 @@ export interface _SERVICE {
           'condition' : string,
         }
       >,
+      'isPumpOn' : boolean,
+      'location' : string,
+    }
+  >,
+  'updatePumpStatus' : ActorMethod<
+    [bigint, boolean],
+    {
+      'id' : bigint,
+      'moistureLevel' : number,
+      'farmerId' : string,
+      'name' : string,
+      'sensors' : Array<
+        {
+          'id' : bigint,
+          'data' : Array<{ 'data' : bigint, 'timestamp' : string }>,
+          'name' : string,
+          'greenhouseId' : string,
+          'typeOfSensor' : string,
+          'condition' : string,
+        }
+      >,
+      'isPumpOn' : boolean,
       'location' : string,
     }
   >,

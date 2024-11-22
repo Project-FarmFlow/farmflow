@@ -57,6 +57,7 @@ const FarmerIDLFactory = (IDL) => {
     location: IDL.Text,
     subscription: IDL.Text,
     greenhouses: IDL.Vec(GreenHouseIDLFactory(IDL)),
+    notifications: IDL.Vec(NotificationsIDLFactory(IDL)),
   });
 };
 
@@ -73,6 +74,7 @@ const actor = Actor.createActor(
           IDL.Text,
           IDL.Text,
           IDL.Vec(GreenHouseIDLFactory(IDL)),
+          IDL.Vec(NotificationsIDLFactory(IDL)),
         ],
         [],
         []
@@ -104,6 +106,7 @@ const actor = Actor.createActor(
       ),
       getFarmerById: IDL.Func([IDL.Text], [FarmerIDLFactory(IDL)], []),
       getGreenHouseById: IDL.Func([IDL.Nat], [GreenHouseIDLFactory(IDL)], []),
+      checkIfFarmerIsRegistered: IDL.Func([IDL.Text], [IDL.Bool], []),
       getHistoricalData: IDL.Func(
         [IDL.Text, IDL.Nat],
         [IDL.Vec(DataIDLFactory(IDL))],

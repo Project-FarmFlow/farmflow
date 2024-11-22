@@ -10,14 +10,19 @@ const HomePage = () => {
   const handleNavigation = async () => {
     try {
       setLoading(true);
-      const checkFarmer = await actor.getFarmerById(user.key);
-      if (checkFarmer) {
-        setLoading(false);
-        navigate("/dashboard");
+      await signIn();
+      if (user?.key) {
+        const checkFarmer = await actor.checkIfFarmerIsRegistered(user.key);
+        if (checkFarmer) {
+          setLoading(false);
+          navigate("/dashboard");
+        } else {
+          setLoading(false);
+          navigate("/user-details");
+        }
       } else {
-        await signIn();
         setLoading(false);
-        navigate("/user-details");
+        console.error("User key is undefined");
       }
     } catch (error) {
       setLoading(false);

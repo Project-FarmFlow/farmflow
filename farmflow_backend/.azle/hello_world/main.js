@@ -5118,13 +5118,14 @@ Sensor.idlFactory = idl_exports.Record({
 
 // src/GreenHouse.ts
 var GreenHouse = class {
-  constructor(id2, name, location, farmerId, sensors, moistureLevel) {
+  constructor(id2, name, location, farmerId, sensors, moistureLevel, isPumpOn) {
     this.id = id2;
     this.name = name;
     this.location = location;
     this.farmerId = farmerId;
     this.sensors = sensors;
     this.moistureLevel = moistureLevel;
+    this.isPumpOn = isPumpOn;
   }
 };
 GreenHouse.idlFactory = idl_exports.Record({
@@ -5133,12 +5134,29 @@ GreenHouse.idlFactory = idl_exports.Record({
   location: idl_exports.Text,
   farmerId: idl_exports.Text,
   sensors: idl_exports.Vec(Sensor.idlFactory),
-  moistureLevel: idl_exports.Float64
+  moistureLevel: idl_exports.Float64,
+  isPumpOn: idl_exports.Bool
+});
+
+// src/Notifications.ts
+var Notifications = class {
+  constructor(id2, title, message, timestamp) {
+    this.id = id2;
+    this.title = title;
+    this.message = message;
+    this.timestamp = timestamp;
+  }
+};
+Notifications.idlFactory = idl_exports.Record({
+  id: idl_exports.Nat,
+  title: idl_exports.Text,
+  message: idl_exports.Text,
+  timestamp: idl_exports.Text
 });
 
 // src/Farmer.ts
 var Farmer = class {
-  constructor(id2, username, password, email, phone, location, subscription, greenhouses) {
+  constructor(id2, username, password, email, phone, location, subscription, greenhouses, notifications) {
     this.id = id2;
     this.username = username;
     this.password = password;
@@ -5147,6 +5165,7 @@ var Farmer = class {
     this.location = location;
     this.subscription = subscription;
     this.greenhouses = greenhouses;
+    this.notifications = notifications;
   }
 };
 Farmer.idlFactory = idl_exports.Record({
@@ -5157,12 +5176,13 @@ Farmer.idlFactory = idl_exports.Record({
   phone: idl_exports.Text,
   location: idl_exports.Text,
   subscription: idl_exports.Text,
-  greenhouses: idl_exports.Vec(GreenHouse.idlFactory)
+  greenhouses: idl_exports.Vec(GreenHouse.idlFactory),
+  notifications: idl_exports.Vec(Notifications.idlFactory)
 });
 var Farmer_default = Farmer;
 
 // src/index.ts
-var _getSensorReadings_dec, _getHistoricalData_dec, _updateSensorCondition_dec, _createSensor_dec, _updateGreenHouseDetails_dec, _getGreenHouseById_dec, _getAllGreenHouses_dec, _createGreenHouse_dec, _getGreenHouseByName_dec, _updateFarmerDetails_dec, _getFarmerById_dec, _getAllFarmers_dec, _createFarmer_dec, _getFarmerByName_dec, _init;
+var _checkSoilMoistureLevel_dec, _checkIfSensorTypeExists_dec, _getSensorReadings_dec, _getHistoricalData_dec, _updateSensorCondition_dec, _createSensor_dec, _updatePumpStatus_dec, _getIsPumpOn_dec, _updateGreenHouseDetails_dec, _getGreenHouseById_dec, _getAllGreenHouses_dec, _createGreenHouse_dec, _getGreenHouseByName_dec, _checkIfFarmerIsRegistered_dec, _pushNotification_dec, _updateFarmerDetails_dec, _getFarmerById_dec, _getAllFarmers_dec, _createFarmer_dec, _getFarmerByName_dec, _init;
 _getFarmerByName_dec = [query([idl_exports.Text], idl_exports.Bool)], _createFarmer_dec = [update([
   idl_exports.Text,
   idl_exports.Text,
@@ -5172,14 +5192,14 @@ _getFarmerByName_dec = [query([idl_exports.Text], idl_exports.Bool)], _createFar
   idl_exports.Text,
   idl_exports.Text,
   idl_exports.Vec(GreenHouse.idlFactory)
-])], _getAllFarmers_dec = [query([], idl_exports.Vec(Farmer_default.idlFactory))], _getFarmerById_dec = [query([idl_exports.Text], Farmer_default.idlFactory)], _updateFarmerDetails_dec = [update([idl_exports.Text, idl_exports.Text, idl_exports.Text], Farmer_default.idlFactory)], _getGreenHouseByName_dec = [query([idl_exports.Text], idl_exports.Bool)], _createGreenHouse_dec = [update([
+])], _getAllFarmers_dec = [query([], idl_exports.Vec(Farmer_default.idlFactory))], _getFarmerById_dec = [query([idl_exports.Text], Farmer_default.idlFactory)], _updateFarmerDetails_dec = [update([idl_exports.Text, idl_exports.Text, idl_exports.Text], Farmer_default.idlFactory)], _pushNotification_dec = [update([idl_exports.Text, Notifications.idlFactory], idl_exports.Text)], _checkIfFarmerIsRegistered_dec = [query([idl_exports.Text], idl_exports.Bool)], _getGreenHouseByName_dec = [query([idl_exports.Text], idl_exports.Bool)], _createGreenHouse_dec = [update([
   idl_exports.Nat,
   idl_exports.Text,
   idl_exports.Text,
   idl_exports.Text,
   idl_exports.Vec(Sensor.idlFactory),
   idl_exports.Float64
-])], _getAllGreenHouses_dec = [query([], idl_exports.Vec(GreenHouse.idlFactory))], _getGreenHouseById_dec = [query([idl_exports.Nat], GreenHouse.idlFactory)], _updateGreenHouseDetails_dec = [update([idl_exports.Nat, idl_exports.Text, idl_exports.Text], GreenHouse.idlFactory)], _createSensor_dec = [update([idl_exports.Text, idl_exports.Nat, idl_exports.Text, idl_exports.Text, idl_exports.Text, idl_exports.Text])], _updateSensorCondition_dec = [update([idl_exports.Text, idl_exports.Nat, idl_exports.Text], Sensor.idlFactory)], _getHistoricalData_dec = [query([idl_exports.Text, idl_exports.Nat], idl_exports.Vec(Data.idlFactory))], _getSensorReadings_dec = [query([idl_exports.Text, idl_exports.Nat], Data.idlFactory)];
+])], _getAllGreenHouses_dec = [query([], idl_exports.Vec(GreenHouse.idlFactory))], _getGreenHouseById_dec = [query([idl_exports.Nat], GreenHouse.idlFactory)], _updateGreenHouseDetails_dec = [update([idl_exports.Nat, idl_exports.Text, idl_exports.Text], GreenHouse.idlFactory)], _getIsPumpOn_dec = [query([idl_exports.Nat], idl_exports.Bool)], _updatePumpStatus_dec = [update([idl_exports.Nat, idl_exports.Bool], GreenHouse.idlFactory)], _createSensor_dec = [update([idl_exports.Text, idl_exports.Nat, idl_exports.Text, idl_exports.Text, idl_exports.Text, idl_exports.Text])], _updateSensorCondition_dec = [update([idl_exports.Text, idl_exports.Nat, idl_exports.Text], Sensor.idlFactory)], _getHistoricalData_dec = [query([idl_exports.Text, idl_exports.Nat], idl_exports.Vec(Data.idlFactory))], _getSensorReadings_dec = [query([idl_exports.Text, idl_exports.Nat], Data.idlFactory)], _checkIfSensorTypeExists_dec = [query([idl_exports.Text, idl_exports.Nat], idl_exports.Bool)], _checkSoilMoistureLevel_dec = [update([idl_exports.Nat, idl_exports.Text], idl_exports.Text)];
 var src_default = class {
   constructor() {
     __runInitializers(_init, 5, this);
@@ -5202,12 +5222,18 @@ var src_default = class {
       return false;
     }
   }
-  createFarmer(id2, username, password, email, phone, location, subscription, greenhouses) {
+  createFarmer(id2, username, password, email, phone, location, subscription, greenhouses, notifications) {
     const isAvailable = this.getFarmerByName(username);
     if (isAvailable) {
       throw new Error("Farmer already exists");
     } else {
-      this.farmerIdToFarmer[id2] = new Farmer_default(
+      const notify2 = new Notifications(
+        0,
+        "Welcome",
+        "Welcome to FarmFlow",
+        Date.now().toString()
+      );
+      const farmer = new Farmer_default(
         id2,
         username,
         password,
@@ -5215,20 +5241,11 @@ var src_default = class {
         phone,
         location,
         subscription,
-        greenhouses
+        greenhouses,
+        [notify2]
       );
-      this.farmers.push(
-        new Farmer_default(
-          id2,
-          username,
-          password,
-          email,
-          phone,
-          location,
-          subscription,
-          greenhouses
-        )
-      );
+      this.farmerIdToFarmer[id2] = farmer;
+      this.farmers.push(farmer);
     }
   }
   getAllFarmers() {
@@ -5293,6 +5310,22 @@ var src_default = class {
     }
     return farmerToUpdate;
   }
+  pushNotification(farmerId, notification) {
+    const farmer = this.getFarmerById(farmerId);
+    if (!farmer) {
+      return "Farmer not found";
+    }
+    farmer.notifications.push(notification);
+    return "Notification pushed";
+  }
+  checkIfFarmerIsRegistered(farmerId) {
+    const farmer = this.farmerIdToFarmer[farmerId];
+    if (farmer) {
+      return true;
+    } else {
+      return false;
+    }
+  }
   getGreenHouseByName(name) {
     if (this.greenHouses.find((greenHouse) => greenHouse.name === name)) {
       return true;
@@ -5311,7 +5344,8 @@ var src_default = class {
         location,
         farmerId,
         sensors,
-        moistureLevel
+        moistureLevel,
+        false
       );
       this.farmerIdToGreenHouse[farmerId] = new GreenHouse(
         id2,
@@ -5319,16 +5353,40 @@ var src_default = class {
         location,
         farmerId,
         sensors,
-        moistureLevel
+        moistureLevel,
+        false
       );
       const farmer = this.getFarmerById(farmerId);
       farmer.greenhouses.push(
-        new GreenHouse(id2, name, location, farmerId, sensors, moistureLevel)
+        new GreenHouse(
+          id2,
+          name,
+          location,
+          farmerId,
+          sensors,
+          moistureLevel,
+          false
+        )
       );
+      const notify2 = new Notifications(
+        Number(this.generateRandomId()),
+        "GreenHouse Created",
+        `${name} has been created successfully. Check it out now.`,
+        Date.now().toString()
+      );
+      farmer.notifications.push(notify2);
       this.farmers = this.farmers.filter((farmer2) => farmer2.id !== farmerId);
       this.farmers.push(farmer);
       this.greenHouses.push(
-        new GreenHouse(id2, name, location, farmerId, sensors, moistureLevel)
+        new GreenHouse(
+          id2,
+          name,
+          location,
+          farmerId,
+          sensors,
+          moistureLevel,
+          false
+        )
       );
     }
   }
@@ -5377,6 +5435,13 @@ var src_default = class {
         break;
     }
     return greenhouseToUpdate;
+  }
+  getIsPumpOn(greenHouseId) {
+    return this.greenHouseIdToGreenHouse[greenHouseId].isPumpOn;
+  }
+  updatePumpStatus(greenHouseId, isPumpOn) {
+    this.greenHouseIdToGreenHouse[greenHouseId].isPumpOn = isPumpOn;
+    return this.greenHouseIdToGreenHouse[greenHouseId];
   }
   createSensor(farmerID, id2, name, typeOfSensor, greenhouseId, condition) {
     const greenhouse = this.getGreenHouseById(parseInt(greenhouseId));
@@ -5427,18 +5492,22 @@ var src_default = class {
     }
     return sensorToUpdate;
   }
-  getHistoricalData(sensorName, greenHouseId) {
+  getHistoricalData(sensorType, greenHouseId) {
     const allSensors = this.greenHouseIdToGreenHouse[greenHouseId].sensors;
-    const sensor = allSensors.find((sensor2) => sensor2.name === sensorName);
+    const sensor = allSensors.find(
+      (sensor2) => sensor2.typeOfSensor === sensorType
+    );
     if (sensor) {
       return sensor.data;
     } else {
       throw new Error("Sensor not found");
     }
   }
-  getSensorReadings(sensorName, greenHouseId) {
+  getSensorReadings(sensorType, greenHouseId) {
     const allSensors = this.greenHouseIdToGreenHouse[greenHouseId].sensors;
-    const sensor = allSensors.find((sensor2) => sensor2.name === sensorName);
+    const sensor = allSensors.find(
+      (sensor2) => sensor2.typeOfSensor === sensorType
+    );
     if (sensor) {
       if (sensor.data.length === 0) {
         return new Data(0, "No data for sensor!");
@@ -5449,6 +5518,80 @@ var src_default = class {
       throw new Error("Sensor not found");
     }
   }
+  checkIfSensorTypeExists(sensorType, greenHouseId) {
+    const allSensors = this.greenHouseIdToGreenHouse[greenHouseId].sensors;
+    const sensor = allSensors.find(
+      (sensor2) => sensor2.typeOfSensor === sensorType
+    );
+    if (sensor) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  checkSoilMoistureLevel(greenHouseId, farmerId) {
+    const greenHouse = this.getGreenHouseById(greenHouseId);
+    if (!greenHouse) {
+      return "GreenHouse not found";
+    }
+    const sensor = greenHouse.sensors.find(
+      (sensor2) => sensor2.typeOfSensor === "Soil Moisture"
+    );
+    if (!sensor) {
+      return "No Soil Moisture sensor found";
+    }
+    if (sensor.data.length === 0) {
+      return "No data for Soil Moisture sensor";
+    }
+    const moistureLevel = sensor.data[sensor.data.length - 1].data;
+    if (moistureLevel < 30) {
+      const notify2 = new Notifications(
+        Number(this.generateRandomId()),
+        "Soil Moisture Alert",
+        "Soil moisture level has dropped below the optimal threshold. Irrigation has been triggered.",
+        Date.now().toString()
+      );
+      const notify22 = new Notifications(
+        Number(this.generateRandomId()),
+        "Pump Status Change",
+        "The water pump has been turned ON. Please ensure adequate water supply to the system.",
+        Date.now().toString()
+      );
+      const notify3 = new Notifications(
+        Number(this.generateRandomId()),
+        "Irrigation Status",
+        "The irrigation system has been automatically activated. Optimal soil moisture levels will be restored soon.",
+        Date.now().toString()
+      );
+      this.farmerIdToFarmer[farmerId].notifications.push(notify2);
+      this.farmerIdToFarmer[farmerId].notifications.push(notify22);
+      this.farmerIdToFarmer[farmerId].notifications.push(notify3);
+      this.updatePumpStatus(greenHouseId, true);
+      return "Moisture level is below 30%. Pump turned on";
+    } else {
+      const notify2 = new Notifications(
+        Number(this.generateRandomId()),
+        "Soil Moisture Alert",
+        "Soil moisture level is now the optimal threshold. Irrigation has been stopped.",
+        Date.now().toString()
+      );
+      const notify22 = new Notifications(
+        Number(this.generateRandomId()),
+        "Pump Status Change",
+        "The water pump has been turned OFF. You can now safely turn off the water system.",
+        Date.now().toString()
+      );
+      this.farmerIdToFarmer[farmerId].notifications.push(notify2);
+      this.farmerIdToFarmer[farmerId].notifications.push(notify22);
+      this.updatePumpStatus(greenHouseId, false);
+      return "Moisture level is above 30%. Pump turned off";
+    }
+  }
+  // ** UTILITIES **//
+  // ** generate random ids **//
+  generateRandomId() {
+    return (Math.floor(Math.random() * 100).toString() + `${Date.now()}`).substring(0, 4);
+  }
 };
 _init = __decoratorStart(null);
 __decorateElement(_init, 1, "getFarmerByName", _getFarmerByName_dec, src_default);
@@ -5456,15 +5599,21 @@ __decorateElement(_init, 1, "createFarmer", _createFarmer_dec, src_default);
 __decorateElement(_init, 1, "getAllFarmers", _getAllFarmers_dec, src_default);
 __decorateElement(_init, 1, "getFarmerById", _getFarmerById_dec, src_default);
 __decorateElement(_init, 1, "updateFarmerDetails", _updateFarmerDetails_dec, src_default);
+__decorateElement(_init, 1, "pushNotification", _pushNotification_dec, src_default);
+__decorateElement(_init, 1, "checkIfFarmerIsRegistered", _checkIfFarmerIsRegistered_dec, src_default);
 __decorateElement(_init, 1, "getGreenHouseByName", _getGreenHouseByName_dec, src_default);
 __decorateElement(_init, 1, "createGreenHouse", _createGreenHouse_dec, src_default);
 __decorateElement(_init, 1, "getAllGreenHouses", _getAllGreenHouses_dec, src_default);
 __decorateElement(_init, 1, "getGreenHouseById", _getGreenHouseById_dec, src_default);
 __decorateElement(_init, 1, "updateGreenHouseDetails", _updateGreenHouseDetails_dec, src_default);
+__decorateElement(_init, 1, "getIsPumpOn", _getIsPumpOn_dec, src_default);
+__decorateElement(_init, 1, "updatePumpStatus", _updatePumpStatus_dec, src_default);
 __decorateElement(_init, 1, "createSensor", _createSensor_dec, src_default);
 __decorateElement(_init, 1, "updateSensorCondition", _updateSensorCondition_dec, src_default);
 __decorateElement(_init, 1, "getHistoricalData", _getHistoricalData_dec, src_default);
 __decorateElement(_init, 1, "getSensorReadings", _getSensorReadings_dec, src_default);
+__decorateElement(_init, 1, "checkIfSensorTypeExists", _checkIfSensorTypeExists_dec, src_default);
+__decorateElement(_init, 1, "checkSoilMoistureLevel", _checkSoilMoistureLevel_dec, src_default);
 __decoratorMetadata(_init, src_default);
 
 // <stdin>
