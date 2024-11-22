@@ -70,8 +70,8 @@ const Dashboard = () => {
           [],
           50.64
         );
-        setLoading(false);
         setShowAddFarmPage(false);
+        setLoading(false);
       } else {
         alert(
           "Please fill out all required fields and select at least one parameter."

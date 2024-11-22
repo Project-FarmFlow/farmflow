@@ -418,9 +418,11 @@ export default class {
   // ** DATA FUNCTIONS **//
   // ** get historical data ** //
   @query([IDL.Text, IDL.Nat], IDL.Vec(Data.idlFactory))
-  getHistoricalData(sensorName: string, greenHouseId: number): Data[] {
+  getHistoricalData(sensorType: string, greenHouseId: number): Data[] {
     const allSensors = this.greenHouseIdToGreenHouse[greenHouseId].sensors;
-    const sensor = allSensors.find((sensor) => sensor.name === sensorName);
+    const sensor = allSensors.find(
+      (sensor) => sensor.typeOfSensor === sensorType
+    );
     if (sensor) {
       return sensor.data;
     } else {
@@ -430,9 +432,11 @@ export default class {
 
   // ** get sensor readings ** //
   @query([IDL.Text, IDL.Nat], Data.idlFactory)
-  getSensorReadings(sensorName: string, greenHouseId: number): Data {
+  getSensorReadings(sensorType: string, greenHouseId: number): Data {
     const allSensors = this.greenHouseIdToGreenHouse[greenHouseId].sensors;
-    const sensor = allSensors.find((sensor) => sensor.name === sensorName);
+    const sensor = allSensors.find(
+      (sensor) => sensor.typeOfSensor === sensorType
+    );
     if (sensor) {
       if (sensor.data.length === 0) {
         return new Data(0, "No data for sensor!");

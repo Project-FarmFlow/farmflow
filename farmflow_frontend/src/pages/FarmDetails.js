@@ -42,7 +42,6 @@ function FarmDetails() {
       </div>
     );
   }
-  console.log(farm);
 
   const AddSensorModal = () => {
     const [sensorDetails, setSensorDetails] = useState({

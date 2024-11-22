@@ -1,12 +1,48 @@
 import React, { useState, useEffect } from "react";
 import { Line } from "react-chartjs-2";
-import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, PointElement, Title, Tooltip, Legend } from "chart.js";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  LineElement,
+  PointElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import actor from "../utils/actor";
 
 // Register chart components
-ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  LineElement,
+  PointElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
-const SensorDashboard = () => {
+const SensorDashboard = ({ farmId }) => {
+  console.log(farmId);
   // State for sensor readings and historical data
+  const [temperature, setTemperature] = useState({
+    data: 0,
+    timestamp: "",
+  });
+  const [humidity, setHumidity] = useState({
+    data: 0,
+    timestamp: "",
+  });
+  const [soilMoisture, setSoilMoisture] = useState({
+    data: 0,
+    timestamp: "",
+  });
+  const [soilPH, setSoilPH] = useState({
+    data: 0,
+    timestamp: "",
+  });
+
   const [sensorReadings, setSensorReadings] = useState({
     temperature: 0,
     humidity: 0,
@@ -21,6 +57,37 @@ const SensorDashboard = () => {
     soilMoisture: [],
     soilPH: [],
   });
+
+  const fetchSensorReadings = async (typeOfSensor) => {
+    try {
+      const response = await actor.getSensorReadings(
+        typeOfSensor,
+        Number(farmId)
+      );
+      if (response) {
+        switch (typeOfSensor.toLowerCase()) {
+          case "temperature":
+            setTemperature(response);
+            break;
+          case "humidity":
+            setHumidity(response);
+            break;
+          case "soil moisture":
+            setSoilMoisture(response);
+            break;
+          case "soil ph":
+            setSoilPH(response);
+            break;
+          default:
+            break;
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  console.log(temperature);
 
   // Simulate fetching sensor readings and historical data (replace with API call in real-world use)
   useEffect(() => {
@@ -41,6 +108,8 @@ const SensorDashboard = () => {
         soilPH: [...historicalData.soilPH, Math.random() * 2 + 5],
       });
     };
+
+    fetchSensorReadings("Temperature");
 
     const interval = setInterval(fetchSensorData, 5000); // Fetch data every 5 seconds
     return () => clearInterval(interval); // Cleanup on component unmount
@@ -70,7 +139,9 @@ const SensorDashboard = () => {
 
   return (
     <div className="container mx-auto py-6 px-4">
-      <h1 className="text-3xl font-semibold text-center mb-6">Sensor Dashboard</h1>
+      <h1 className="text-3xl font-semibold text-center mb-6">
+        Sensor Dashboard
+      </h1>
 
       {/* Sensor Readings */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
@@ -96,7 +167,9 @@ const SensorDashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div className="bg-white p-4 rounded-lg shadow-md">
           <h3 className="text-xl font-semibold mb-2">Temperature History</h3>
-          <Line data={getChartData("Temperature", historicalData.temperature)} />
+          <Line
+            data={getChartData("Temperature", historicalData.temperature)}
+          />
         </div>
         <div className="bg-white p-4 rounded-lg shadow-md">
           <h3 className="text-xl font-semibold mb-2">Humidity History</h3>
@@ -104,7 +177,9 @@ const SensorDashboard = () => {
         </div>
         <div className="bg-white p-4 rounded-lg shadow-md">
           <h3 className="text-xl font-semibold mb-2">Soil Moisture History</h3>
-          <Line data={getChartData("Soil Moisture", historicalData.soilMoisture)} />
+          <Line
+            data={getChartData("Soil Moisture", historicalData.soilMoisture)}
+          />
         </div>
         <div className="bg-white p-4 rounded-lg shadow-md">
           <h3 className="text-xl font-semibold mb-2">Soil pH History</h3>
@@ -117,7 +192,9 @@ const SensorDashboard = () => {
         <h3 className="text-2xl font-semibold mb-4">Pump Control</h3>
         <button
           onClick={togglePump}
-          className={`w-full py-2 rounded-lg text-white ${pumpStatus ? "bg-red-600" : "bg-green-600"} hover:bg-opacity-80`}
+          className={`w-full py-2 rounded-lg text-white ${
+            pumpStatus ? "bg-red-600" : "bg-green-600"
+          } hover:bg-opacity-80`}
         >
           {pumpStatus ? "Turn Pump Off" : "Turn Pump On"}
         </button>
