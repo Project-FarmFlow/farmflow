@@ -1,45 +1,79 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { authSubscribe, signOut } from "@junobuild/core";
+import actor from "../utils/actor";
+import toast from "react-hot-toast";
 
 const Profile = () => {
-  const farmerDetails = {
-    profilePic: "https://townsquare.media/site/366/files/2022/02/attachment-oli_sykes_bmth_2022_red_carpet_photo.jpg?w=1200&h=0&zc=1&s=0&a=t&q=89", // Replace with actual profile pic URL
-    username: "JohnDoe",
-    email: "john.doe@example.com",
-    phone: "+123456789",
-    location: "Springfield, USA",
-    bio: "Passionate farmer with a focus on sustainable and smart farming practices.",
-    greenhouses: ["Greenhouse A", "Greenhouse B", "Farm 1"],
-  };
-
-  const [isEditing, setIsEditing] = useState(false);
-  const [newProfilePic, setNewProfilePic] = useState(farmerDetails.profilePic);
-  const [newUsername, setNewUsername] = useState(farmerDetails.username);
-  const [newEmail, setNewEmail] = useState(farmerDetails.email);
-  const [newPhone, setNewPhone] = useState(farmerDetails.phone);
-  const [newLocation, setNewLocation] = useState(farmerDetails.location);
-  const [newBio, setNewBio] = useState(farmerDetails.bio);
-  const [successMessage, setSuccessMessage] = useState(null);
+  const [user, setUser] = useState(null);
+  const [farmer, setFarmer] = useState({
+    id: "",
+    username: "",
+    email: "",
+    phone: "",
+    location: "",
+    bio: "",
+    greenhouses: [],
+    notifications: [],
+  });
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSaveChanges = () => {
-    // Here you would typically handle the form submission (e.g., API request) to save changes
-
-    // Simulate saving and show success message
-    setSuccessMessage("Your profile has been successfully updated!");
-
-    // After showing success message, redirect to the profile page
-    setTimeout(() => {
-      setSuccessMessage(null); // Hide the success message after 2 seconds
-      setIsEditing(false); // Close the edit form
-      navigate("/profile"); // Redirect to profile page
-    }, 2000); // 2 seconds for the success message to show
+  const fetchFarmer = async (farmerId) => {
+    if (farmerId === null) {
+      toast.error("Please login to continue");
+      return;
+    }
+    try {
+      setLoading(true);
+      const farmer = await actor.getFarmerById(farmerId);
+      setFarmer(farmer);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+    }
   };
 
-  const handleCancel = () => {
-    // Close the edit form without saving any changes
-    setIsEditing(false);
+  useEffect(() => {
+    authSubscribe((user) => {
+      setUser(user);
+    });
+  });
+
+  useEffect(() => {
+    if (user) {
+      fetchFarmer(user.key);
+    }
+  }, [user]);
+
+  if (user === null) {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex flex-col items-center justify-center z-50">
+        <h1 className="text-white ml-4 text-lg">Not logged in.</h1>
+        <button
+          className="bg-green-500 rounded-md font-bold text-lg py-2 px-8 text-white my-4"
+          onClick={() => navigate("/")}
+        >
+          Login
+        </button>
+      </div>
+    );
+  }
+
+  const handleSignOut = async () => {
+    setLoading(true);
+    await signOut();
   };
+
+  if (loading) {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-md flex flex-col items-center justify-center z-50">
+        <span className="loading loading-dots loading-lg bg-green-500"></span>
+        <h1 className="text-white ml-4 text-lg">Please wait...</h1>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-gray-100 min-h-screen py-6">
@@ -47,18 +81,18 @@ const Profile = () => {
         {/* Profile Header */}
         <div className="flex items-center space-x-6 mb-6">
           <img
-            src={newProfilePic}
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVrbDY4WchJxm38MkjaCOIrSFO9l1XkWECZA&s"
             alt="Profile"
             className="w-24 h-24 rounded-full object-cover"
           />
           <div>
-            <h1 className="text-2xl font-bold">{newUsername}</h1>
-            <p className="text-gray-600">{newBio}</p>
+            <h1 className="text-2xl font-bold">{farmer.username}</h1>
+            <p className="text-gray-600">Subscription: {farmer.subscription}</p>
             <button
-              onClick={() => setIsEditing(true)}
+              onClick={handleSignOut}
               className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg"
             >
-              Edit Profile
+              Sign out
             </button>
           </div>
         </div>
@@ -68,13 +102,13 @@ const Profile = () => {
           <div>
             <h2 className="font-semibold text-lg">Contact Information</h2>
             <p className="mt-2 text-gray-600">
-              <strong>Email:</strong> {newEmail}
+              <strong>Email:</strong> {farmer.email}
             </p>
             <p className="mt-2 text-gray-600">
-              <strong>Phone:</strong> {newPhone}
+              <strong>Phone:</strong> {farmer.phone}
             </p>
             <p className="mt-2 text-gray-600">
-              <strong>Location:</strong> {newLocation}
+              <strong>Location:</strong> {farmer.location.toUpperCase()}
             </p>
           </div>
 
@@ -82,109 +116,16 @@ const Profile = () => {
           <div>
             <h2 className="font-semibold text-lg">Greenhouses / Farms</h2>
             <ul className="mt-2 space-y-1 text-gray-600">
-              {farmerDetails.greenhouses.map((farm, index) => (
-                <li key={index} className="list-disc list-inside">
-                  {farm}
-                </li>
-              ))}
+              {farmer.greenhouses.length > 0 &&
+                farmer.greenhouses.map((greenhouse, index) => (
+                  <li key={index} className="list-disc list-inside">
+                    {greenhouse.name}
+                  </li>
+                ))}
             </ul>
           </div>
         </div>
       </div>
-
-      {/* Edit Profile Form */}
-      {isEditing && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full h-auto max-h-[90vh] overflow-y-auto">
-            <h2 className="text-xl font-bold mb-4">Edit Profile</h2>
-            <form>
-              <div className="mb-4">
-                <label className="block text-gray-700">Profile Picture</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setNewProfilePic(URL.createObjectURL(e.target.files[0]))}
-                  className="mt-2"
-                />
-                <img
-                  src={newProfilePic}
-                  alt="New Profile"
-                  className="w-24 h-24 mt-2 rounded-full object-cover"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700">Username</label>
-                <input
-                  type="text"
-                  value={newUsername}
-                  onChange={(e) => setNewUsername(e.target.value)}
-                  className="mt-2 w-full p-2 border border-gray-300 rounded"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700">Email</label>
-                <input
-                  type="email"
-                  value={newEmail}
-                  onChange={(e) => setNewEmail(e.target.value)}
-                  className="mt-2 w-full p-2 border border-gray-300 rounded"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700">Phone</label>
-                <input
-                  type="tel"
-                  value={newPhone}
-                  onChange={(e) => setNewPhone(e.target.value)}
-                  className="mt-2 w-full p-2 border border-gray-300 rounded"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700">Location</label>
-                <input
-                  type="text"
-                  value={newLocation}
-                  onChange={(e) => setNewLocation(e.target.value)}
-                  className="mt-2 w-full p-2 border border-gray-300 rounded"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700">Bio</label>
-                <textarea
-                  value={newBio}
-                  onChange={(e) => setNewBio(e.target.value)}
-                  className="mt-2 w-full p-2 border border-gray-300 rounded"
-                />
-              </div>
-              <div className="flex justify-end space-x-2">
-                <button
-                  type="button"
-                  onClick={handleSaveChanges}
-                  className="px-4 py-2 bg-green-500 text-white rounded-lg"
-                >
-                  Save Changes
-                </button>
-                <button
-                  type="button"
-                  onClick={handleCancel}
-                  className="px-4 py-2 bg-gray-500 text-white rounded-lg"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Success Popup */}
-      {successMessage && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="bg-green-500 text-white p-6 rounded-lg shadow-lg max-w-sm w-full">
-            {successMessage}
-          </div>
-        </div>
-      )}
     </div>
   );
 };

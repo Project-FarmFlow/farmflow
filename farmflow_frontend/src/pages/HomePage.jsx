@@ -1,21 +1,35 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { signIn } from "@junobuild/core";
+import { signIn, authSubscribe } from "@junobuild/core";
+import actor from "../utils/actor";
 
 const HomePage = () => {
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const handleNavigation = async () => {
     try {
       setLoading(true);
-      await signIn();
-      setLoading(false);
-      navigate("/user-details");
+      const checkFarmer = await actor.getFarmerById(user.key);
+      if (checkFarmer) {
+        setLoading(false);
+        navigate("/dashboard");
+      } else {
+        await signIn();
+        setLoading(false);
+        navigate("/user-details");
+      }
     } catch (error) {
       setLoading(false);
       console.error(error);
     }
   };
+
+  useEffect(() => {
+    authSubscribe((user) => {
+      setUser(user);
+    });
+  });
 
   const LoadingOverlay = () => (
     <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-md flex flex-col items-center justify-center z-50">
