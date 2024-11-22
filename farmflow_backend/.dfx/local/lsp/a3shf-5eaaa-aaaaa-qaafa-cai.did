@@ -127,6 +127,12 @@ service : {
       },
     ) query;
   getGreenHouseByName : (text) -> (bool) query;
+  getHistoricalData : (text, nat) -> (
+      vec record { data : nat; timestamp : text },
+    ) query;
+  getSensorReadings : (text, nat) -> (
+      record { data : nat; timestamp : text },
+    ) query;
   updateFarmerDetails : (text, text, text) -> (
       record {
         id : text;

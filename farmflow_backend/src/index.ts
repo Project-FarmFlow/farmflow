@@ -434,7 +434,11 @@ export default class {
     const allSensors = this.greenHouseIdToGreenHouse[greenHouseId].sensors;
     const sensor = allSensors.find((sensor) => sensor.name === sensorName);
     if (sensor) {
-      return sensor.data[sensor.data.length - 1];
+      if (sensor.data.length === 0) {
+        return new Data(0, "No data for sensor!");
+      } else {
+        return sensor.data[sensor.data.length - 1];
+      }
     } else {
       throw new Error("Sensor not found");
     }

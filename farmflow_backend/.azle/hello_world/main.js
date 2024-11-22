@@ -5162,7 +5162,7 @@ Farmer.idlFactory = idl_exports.Record({
 var Farmer_default = Farmer;
 
 // src/index.ts
-var _updateSensorCondition_dec, _createSensor_dec, _updateGreenHouseDetails_dec, _getGreenHouseById_dec, _getAllGreenHouses_dec, _createGreenHouse_dec, _getGreenHouseByName_dec, _updateFarmerDetails_dec, _getFarmerById_dec, _getAllFarmers_dec, _createFarmer_dec, _getFarmerByName_dec, _init;
+var _getSensorReadings_dec, _getHistoricalData_dec, _updateSensorCondition_dec, _createSensor_dec, _updateGreenHouseDetails_dec, _getGreenHouseById_dec, _getAllGreenHouses_dec, _createGreenHouse_dec, _getGreenHouseByName_dec, _updateFarmerDetails_dec, _getFarmerById_dec, _getAllFarmers_dec, _createFarmer_dec, _getFarmerByName_dec, _init;
 _getFarmerByName_dec = [query([idl_exports.Text], idl_exports.Bool)], _createFarmer_dec = [update([
   idl_exports.Text,
   idl_exports.Text,
@@ -5179,7 +5179,7 @@ _getFarmerByName_dec = [query([idl_exports.Text], idl_exports.Bool)], _createFar
   idl_exports.Text,
   idl_exports.Vec(Sensor.idlFactory),
   idl_exports.Float64
-])], _getAllGreenHouses_dec = [query([], idl_exports.Vec(GreenHouse.idlFactory))], _getGreenHouseById_dec = [query([idl_exports.Nat], GreenHouse.idlFactory)], _updateGreenHouseDetails_dec = [update([idl_exports.Nat, idl_exports.Text, idl_exports.Text], GreenHouse.idlFactory)], _createSensor_dec = [update([idl_exports.Text, idl_exports.Nat, idl_exports.Text, idl_exports.Text, idl_exports.Text, idl_exports.Text])], _updateSensorCondition_dec = [update([idl_exports.Text, idl_exports.Nat, idl_exports.Text], Sensor.idlFactory)];
+])], _getAllGreenHouses_dec = [query([], idl_exports.Vec(GreenHouse.idlFactory))], _getGreenHouseById_dec = [query([idl_exports.Nat], GreenHouse.idlFactory)], _updateGreenHouseDetails_dec = [update([idl_exports.Nat, idl_exports.Text, idl_exports.Text], GreenHouse.idlFactory)], _createSensor_dec = [update([idl_exports.Text, idl_exports.Nat, idl_exports.Text, idl_exports.Text, idl_exports.Text, idl_exports.Text])], _updateSensorCondition_dec = [update([idl_exports.Text, idl_exports.Nat, idl_exports.Text], Sensor.idlFactory)], _getHistoricalData_dec = [query([idl_exports.Text, idl_exports.Nat], idl_exports.Vec(Data.idlFactory))], _getSensorReadings_dec = [query([idl_exports.Text, idl_exports.Nat], Data.idlFactory)];
 var src_default = class {
   constructor() {
     __runInitializers(_init, 5, this);
@@ -5383,6 +5383,12 @@ var src_default = class {
     if (!greenhouse) {
       throw new Error("Greenhouse not found");
     }
+    const sensorExists = greenhouse.sensors.find(
+      (sensor) => sensor.name === name
+    );
+    if (sensorExists) {
+      throw new Error("Sensor already exists");
+    }
     const newSensor = new Sensor(
       id2,
       name,
@@ -5421,6 +5427,28 @@ var src_default = class {
     }
     return sensorToUpdate;
   }
+  getHistoricalData(sensorName, greenHouseId) {
+    const allSensors = this.greenHouseIdToGreenHouse[greenHouseId].sensors;
+    const sensor = allSensors.find((sensor2) => sensor2.name === sensorName);
+    if (sensor) {
+      return sensor.data;
+    } else {
+      throw new Error("Sensor not found");
+    }
+  }
+  getSensorReadings(sensorName, greenHouseId) {
+    const allSensors = this.greenHouseIdToGreenHouse[greenHouseId].sensors;
+    const sensor = allSensors.find((sensor2) => sensor2.name === sensorName);
+    if (sensor) {
+      if (sensor.data.length === 0) {
+        return new Data(0, "No data for sensor!");
+      } else {
+        return sensor.data[sensor.data.length - 1];
+      }
+    } else {
+      throw new Error("Sensor not found");
+    }
+  }
 };
 _init = __decoratorStart(null);
 __decorateElement(_init, 1, "getFarmerByName", _getFarmerByName_dec, src_default);
@@ -5435,6 +5463,8 @@ __decorateElement(_init, 1, "getGreenHouseById", _getGreenHouseById_dec, src_def
 __decorateElement(_init, 1, "updateGreenHouseDetails", _updateGreenHouseDetails_dec, src_default);
 __decorateElement(_init, 1, "createSensor", _createSensor_dec, src_default);
 __decorateElement(_init, 1, "updateSensorCondition", _updateSensorCondition_dec, src_default);
+__decorateElement(_init, 1, "getHistoricalData", _getHistoricalData_dec, src_default);
+__decorateElement(_init, 1, "getSensorReadings", _getSensorReadings_dec, src_default);
 __decoratorMetadata(_init, src_default);
 
 // <stdin>

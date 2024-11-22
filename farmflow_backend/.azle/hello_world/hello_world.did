@@ -8,6 +8,8 @@ service: () -> {
     getFarmerByName: (text) -> (bool) query;
     getGreenHouseById: (nat) -> (record {id:nat; moistureLevel:float64; farmerId:text; name:text; sensors:vec record {id:nat; data:vec record {data:nat; timestamp:text}; name:text; greenhouseId:text; typeOfSensor:text; condition:text}; location:text}) query;
     getGreenHouseByName: (text) -> (bool) query;
+    getHistoricalData: (text, nat) -> (vec record {data:nat; timestamp:text}) query;
+    getSensorReadings: (text, nat) -> (record {data:nat; timestamp:text}) query;
     updateFarmerDetails: (text, text, text) -> (record {id:text; username:text; subscription:text; password:text; email:text; phone:text; location:text; greenhouses:vec record {id:nat; moistureLevel:float64; farmerId:text; name:text; sensors:vec record {id:nat; data:vec record {data:nat; timestamp:text}; name:text; greenhouseId:text; typeOfSensor:text; condition:text}; location:text}});
     updateGreenHouseDetails: (nat, text, text) -> (record {id:nat; moistureLevel:float64; farmerId:text; name:text; sensors:vec record {id:nat; data:vec record {data:nat; timestamp:text}; name:text; greenhouseId:text; typeOfSensor:text; condition:text}; location:text});
     updateSensorCondition: (text, nat, text) -> (record {id:nat; data:vec record {data:nat; timestamp:text}; name:text; greenhouseId:text; typeOfSensor:text; condition:text});

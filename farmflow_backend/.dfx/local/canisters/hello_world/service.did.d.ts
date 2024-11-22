@@ -166,6 +166,14 @@ export interface _SERVICE {
     }
   >,
   'getGreenHouseByName' : ActorMethod<[string], boolean>,
+  'getHistoricalData' : ActorMethod<
+    [string, bigint],
+    Array<{ 'data' : bigint, 'timestamp' : string }>
+  >,
+  'getSensorReadings' : ActorMethod<
+    [string, bigint],
+    { 'data' : bigint, 'timestamp' : string }
+  >,
   'updateFarmerDetails' : ActorMethod<
     [string, string, string],
     {

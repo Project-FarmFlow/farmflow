@@ -190,6 +190,16 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'getGreenHouseByName' : IDL.Func([IDL.Text], [IDL.Bool], ['query']),
+    'getHistoricalData' : IDL.Func(
+        [IDL.Text, IDL.Nat],
+        [IDL.Vec(IDL.Record({ 'data' : IDL.Nat, 'timestamp' : IDL.Text }))],
+        ['query'],
+      ),
+    'getSensorReadings' : IDL.Func(
+        [IDL.Text, IDL.Nat],
+        [IDL.Record({ 'data' : IDL.Nat, 'timestamp' : IDL.Text })],
+        ['query'],
+      ),
     'updateFarmerDetails' : IDL.Func(
         [IDL.Text, IDL.Text, IDL.Text],
         [
