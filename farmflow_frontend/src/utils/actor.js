@@ -1,7 +1,7 @@
 import { Actor, HttpAgent } from "@dfinity/agent";
 import { Principal } from "@dfinity/principal";
 
-const canisterId = Principal.fromText("a3shf-5eaaa-aaaaa-qaafa-cai");
+const canisterId = Principal.fromText("bkyz2-fmaaa-aaaaa-qaaaq-cai");
 
 const agent = new HttpAgent({ host: "http://127.0.0.1:4943" });
 

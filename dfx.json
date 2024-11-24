@@ -1,0 +1,35 @@
+{
+  "canisters": {
+    "hello_world": {
+      "build": "node_modules/.bin/azle compile hello_world",
+      "candid": "farmflow_backend/.azle/hello_world/hello_world.did",
+      "gzip": true,
+      "main": "farmflow_backend/src/index.ts",
+      "tech_stack": {
+        "cdk": {
+          "azle": {}
+        },
+        "language": {
+          "javascript": {},
+          "typescript": {}
+        }
+      },
+      "type": "custom",
+      "wasm": "farmflow_backend/.azle/hello_world/hello_world.wasm"
+    },
+    "farmflow_frontend": {
+      "dependencies": ["hello_world"],
+      "source": ["farmflow_frontend/build"],
+      "type": "assets",
+      "workspace": "farmflow_frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
